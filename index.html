@@ -1,390 +1,235 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Galería Abstracta</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Tienda</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
 
-<style>
-  body {
-    margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; color: #333;
-  }
-  header {
-    background-color: #111; color: white; padding: 1rem; text-align: center;
-  }
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    padding: 2rem;
-  }
-  .art-piece {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    transition: transform 0.2s ease;
-  }
-  .art-piece:hover {
-    transform: scale(1.02);
-  }
-  .art-piece img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    cursor: pointer;
-  }
-  .info {
-    padding: 1rem;
-  }
-  .info h3 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
-  .info p {
-    margin: 0.5rem 0 0;
-    font-size: 0.9rem;
-  }
-  .buy-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    margin: 1rem 0 0 0;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: block;
-    width: 90%;
-    max-width: 180px;
-    text-align: center;
-  }
+    #cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+      gap: 20px;
+    }
 
-  /* Popup compra lado a lado */
-  #popupCompra {
-    display: none;
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 1.5rem 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    z-index: 1000;
-    max-width: 700px;
-    width: 90%;
-    box-sizing: border-box;
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
 
-    display: flex;
-    gap: 2rem;
-  }
-  #popupCompra img {
-    max-width: 40%;
-    height: auto;
-    border-radius: 5px;
-  }
-  .popup-content {
-    flex: 1; /* espacio restante */
-    display: flex;
-    flex-direction: column;
-  }
-  #popupCompra textarea, #popupCompra input[type="text"] {
-    width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    resize: vertical;
-    font-family: Arial, sans-serif;
-    font-size: 1rem;
-  }
-  .popup-buttons {
-    margin-top: auto;
-    text-align: right;
-  }
+    .card img {
+      width: 100%;
+      cursor: pointer;
+      border-radius: 4px;
+    }
 
-  /* Popup solo imagen ampliada */
-  #popupImagen {
-    display: none;
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    z-index: 1001;
-    max-width: 90vw;
-    max-height: 90vh;
-    box-sizing: border-box;
-    text-align: center;
-  }
-  #popupImagen img {
-    max-width: 100%;
-    max-height: 80vh;
-    border-radius: 5px;
-  }
+    .card h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1em;
+    }
 
-  .overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 999;
-  }
-  .close-btn {
-    position: absolute;
-    top: 10px; right: 15px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #999;
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.2s ease;
-    z-index: 1002;
-  }
-  .close-btn:hover {
-    color: #333;
-  }
-  .success-message {
-    padding: 1rem;
-    margin-top: 1rem;
-    border: 1px solid green;
-    color: green;
-    font-weight: bold;
-    border-radius: 5px;
-    width: 100%;
-    text-align: center;
-    box-sizing: border-box;
-  }
-</style>
+    .card .price {
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
 
-<!-- EmailJS SDK -->
-<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+    .btn-buy {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.95em;
+    }
 
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 20px;
+      position: relative;
+      border-radius: 4px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+    }
+
+    .close-popup {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    .purchase-content {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .purchase-content .left,
+    .purchase-content .right {
+      flex: 1 1 200px;
+      padding: 10px;
+    }
+
+    .purchase-content .left img {
+      width: 100%;
+      border-radius: 4px;
+    }
+
+    .purchase-content .right h2 {
+      margin: 0 0 5px;
+    }
+
+    .purchase-content .right .price {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .purchase-content textarea {
+      width: 100%;
+      height: 80px;
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 0.95em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+
+    .btn-send {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.95em;
+      margin-right: 10px;
+    }
+  </style>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 </head>
 <body>
 
-<header>
-  <h1>Galería Abstracta</h1>
-  <p>Cuadros inspirados en el gusto artístico de mi profesor de plástica</p>
-</header>
+  <div id="cards-container"></div>
 
-<div class="overlay" id="overlay"></div>
-
-<!-- Popup compra -->
-<div id="popupCompra">
-  <span class="close-btn" id="closePopupCompra">&times;</span>
-  
-  <img id="popupImgCompra" src="" alt="Cuadro Ampliado" />
-  
-  <div class="popup-content">
-    <textarea id="mensajeCompra" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
-    <div class="popup-buttons">
-      <button id="btnEnviarMensajeCompra">Enviar mensaje</button>
-    </div>
-
-    <div id="mensajeExitoCompra" class="success-message" style="display:none;">
-      ¡Mensaje enviado correctamente!
-    </div>
-
-    <input type="text" id="direccionEnvioCompra" placeholder="Introduce tu dirección de envío" style="display:none; margin-top: 1rem;" />
-    <div class="popup-buttons" id="confirmCompraDivCompra" style="display:none;">
-      <button id="btnConfirmarCompra">Confirmar compra</button>
+  <!-- Popup imagen ampliada -->
+  <div id="image-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-popup">&times;</span>
+      <img id="popup-img" src="" alt="Imagen ampliada" style="max-width:100%; max-height:80vh;"/>
     </div>
   </div>
-</div>
 
-<!-- Popup solo imagen -->
-<div id="popupImagen">
-  <span class="close-btn" id="closePopupImagen">&times;</span>
-  <img id="popupImgSolo" src="" alt="Imagen Ampliada" />
-</div>
+  <!-- Popup compra/oferta -->
+  <div id="purchase-popup" class="popup">
+    <div class="popup-content purchase-content">
+      <span class="close-popup">&times;</span>
+      <div class="left">
+        <img id="purchase-img" src="" alt="Producto"/>
+      </div>
+      <div class="right">
+        <h2 id="purchase-title"></h2>
+        <div class="price" id="purchase-price"></div>
+        <form id="purchase-form">
+          <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda"></textarea>
+          <button type="submit" class="btn-send">Enviar</button>
+        </form>
+        <button id="paypal-btn" class="btn-buy">Comprar</button>
+      </div>
+    </div>
+  </div>
 
-<section class="gallery" id="gallery"></section>
+  <script>
+    // Inicializa EmailJS con tu public key
+    emailjs.init('e2kVQDAK-HAuURhku');
 
-<section class="contact">
-  <h2>Contacto</h2>
-  <p>¿Interesado en un cuadro? Escríbeme a: <strong>miguel.cuadros.soporte@gmail.com</strong></p>
-</section>
+    // Tu correo de vendedor en PayPal
+    const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
-<footer>
-  <p>&copy; 2025 Galería Abstracta - Proyecto personal de prueba</p>
-</footer>
+    fetch('data.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('cards-container');
+        data.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${item.imagen}" alt="${item.titulo}" />
+            <h3>${item.titulo}</h3>
+            <div class="price">${item.precio.toFixed(2)} €</div>
+            <button class="btn-buy">Comprar</button>
+          `;
+          container.appendChild(card);
 
-<script>
-  emailjs.init('e2kVQDAK-HAuURhku');
+          // Mostrar popup de imagen ampliada
+          card.querySelector('img').addEventListener('click', () => {
+            document.getElementById('popup-img').src = item.imagen;
+            document.getElementById('image-popup').style.display = 'flex';
+          });
 
-  let cuadroSeleccionado = null;
-  let mensajesEnviados = 0;
+          // Mostrar popup de compra/oferta
+          card.querySelector('.btn-buy').addEventListener('click', () => {
+            document.getElementById('purchase-img').src = item.imagen;
+            document.getElementById('purchase-title').textContent = item.titulo;
+            document.getElementById('purchase-price').textContent = item.precio.toFixed(2) + ' €';
 
-  async function cargarCuadros() {
-    try {
-      const response = await fetch('cuadros.json');
-      const cuadros = await response.json();
-      const gallery = document.getElementById('gallery');
-      gallery.innerHTML = '';
-      cuadros.forEach(cuadro => {
-        const artDiv = document.createElement('div');
-        artDiv.className = 'art-piece';
-        artDiv.innerHTML = `
-          <img src="${cuadro.imagen}" alt="${cuadro.titulo}" />
-          <div class="info">
-            <h3>${cuadro.titulo}</h3>
-            <p>Precio: ${cuadro.precio}</p>
-            <button class="buy-button">Comprar</button>
-          </div>
-        `;
+            // Generar enlace PayPal
+            const params = new URLSearchParams({
+              cmd: '_xclick',
+              business: PAYPAL_EMAIL,
+              item_name: item.titulo,
+              amount: item.precio.toFixed(2),
+              currency_code: 'EUR'
+            });
+            document.getElementById('paypal-btn').onclick = () => {
+              window.open('https://www.paypal.com/cgi-bin/webscr?' + params, '_blank');
+            };
 
-        artDiv.querySelector('img').addEventListener('click', () => {
-          abrirPopupImagenSolo(cuadro.imagen, cuadro.titulo);
+            document.getElementById('purchase-popup').style.display = 'flex';
+          });
         });
+      })
+      .catch(console.error);
 
-        artDiv.querySelector('.buy-button').addEventListener('click', () => {
-          abrirPopupCompra(cuadro);
-        });
-
-        gallery.appendChild(artDiv);
+    // Cerrar popups
+    document.querySelectorAll('.close-popup').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.closest('.popup').style.display = 'none';
       });
-    } catch (error) {
-      console.error('Error cargando cuadros:', error);
-    }
-  }
-
-  function abrirPopupCompra(cuadro) {
-    cuadroSeleccionado = cuadro;
-
-    document.getElementById('popupImgCompra').src = cuadro.imagen;
-    document.getElementById('popupImgCompra').alt = cuadro.titulo;
-
-    // Reset formulario y estados
-    const mensajeCompra = document.getElementById('mensajeCompra');
-    mensajeCompra.value = '';
-    mensajeCompra.style.display = 'block';
-
-    document.getElementById('btnEnviarMensajeCompra').style.display = 'inline-block';
-    document.getElementById('direccionEnvioCompra').style.display = 'none';
-    document.getElementById('confirmCompraDivCompra').style.display = 'none';
-
-    document.getElementById('mensajeExitoCompra').style.display = 'none';
-    document.getElementById('direccionEnvioCompra').value = '';
-
-    document.getElementById('popupCompra').style.display = 'flex';
-    document.getElementById('overlay').style.display = 'block';
-  }
-
-  function cerrarPopup() {
-    document.getElementById('popupCompra').style.display = 'none';
-    document.getElementById('popupImagen').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
-    document.getElementById('mensajeExitoCompra').style.display = 'none';
-    cuadroSeleccionado = null;
-  }
-
-  document.getElementById('closePopupCompra').addEventListener('click', cerrarPopup);
-  document.getElementById('closePopupImagen').addEventListener('click', cerrarPopup);
-  document.getElementById('overlay').addEventListener('click', cerrarPopup);
-
-  function abrirPopupImagenSolo(imagenSrc, titulo) {
-    const popupImagen = document.getElementById('popupImagen');
-    const imgElem = document.getElementById('popupImgSolo');
-    imgElem.src = imagenSrc;
-    imgElem.alt = titulo;
-    popupImagen.style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-  }
-
-  // Enviar mensaje con EmailJS
-  document.getElementById('btnEnviarMensajeCompra').addEventListener('click', () => {
-    if (mensajesEnviados >= 3) {
-      alert('Has alcanzado el límite de 3 mensajes enviados. Por favor, espera antes de enviar más.');
-      return;
-    }
-
-    const mensajeElem = document.getElementById('mensajeCompra');
-    const mensaje = mensajeElem.value.trim();
-    if (!mensaje) {
-      alert('Por favor, escribe un mensaje antes de enviar.');
-      return;
-    }
-
-    if (!cuadroSeleccionado) {
-      alert('Error: no hay cuadro seleccionado.');
-      return;
-    }
-
-    emailjs.send('service_3vsow58', 'template_mh5j9yd', {
-      mensaje: mensaje,
-      imagen: cuadroSeleccionado.imagen,
-      precio: cuadroSeleccionado.precio,
-      titulo: cuadroSeleccionado.titulo
-    }).then(() => {
-      mensajesEnviados++;
-      mensajeElem.value = '';
-      mostrarMensajeEnviado();
-
-      // Ocultar textarea y botón enviar
-      mensajeElem.style.display = 'none';
-      document.getElementById('btnEnviarMensajeCompra').style.display = 'none';
-
-      // Mostrar input dirección y botón confirmar compra
-      document.getElementById('direccionEnvioCompra').style.display = 'block';
-      document.getElementById('confirmCompraDivCompra').style.display = 'block';
-
-    }).catch((error) => {
-      alert('Error al enviar el mensaje, intenta de nuevo.');
-      console.error(error);
     });
-  });
 
-  function mostrarMensajeEnviado() {
-    const successDiv = document.getElementById('mensajeExitoCompra');
-    successDiv.style.display = 'block';
-    setTimeout(() => {
-      successDiv.style.display = 'none';
-    }, 4000);
-  }
-
-  // Confirmar compra y redirigir a PayPal
-  document.getElementById('btnConfirmarCompra').addEventListener('click', () => {
-    const direccion = document.getElementById('direccionEnvioCompra').value.trim();
-    if (!direccion) {
-      alert('Por favor, introduce tu dirección de envío antes de confirmar la compra.');
-      return;
-    }
-    if (!cuadroSeleccionado) {
-      alert('Error: no hay cuadro seleccionado.');
-      return;
-    }
-
-    // Extraer número del precio para PayPal
-    const precioTexto = cuadroSeleccionado.precio.replace(/[^\d.,]/g, '').replace(',', '.');
-    const precioNum = parseFloat(precioTexto);
-    if (isNaN(precioNum) || precioNum <= 0) {
-      alert('Precio no válido para el pago.');
-      return;
-    }
-
-    const emailVendedor = 'miguel.cuadros.soporte@gmail.com';
-    const nombreProducto = encodeURIComponent(cuadroSeleccionado.titulo || 'Cuadro Abstracto');
-    const precioPago = precioNum.toFixed(2);
-
-    const paypalUrl = 
-      `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick` +
-      `&business=${encodeURIComponent(emailVendedor)}` +
-      `&item_name=${nombreProducto}` +
-      `&amount=${precioPago}` +
-      `&currency_code=EUR`;
-
-    if(confirm(`Vas a pagar ${precioPago} € por el cuadro.\n¿Quieres proceder al pago?`)){
-      window.location.href = paypalUrl;
-    }
-  });
-
-  cargarCuadros();
-</script>
-
+    // Envío de formulario con EmailJS
+    document.getElementById('purchase-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      emailjs.sendForm('service_3vsow58', 'template_mh5j9yd', this)
+        .then(() => alert('Mensaje enviado correctamente'))
+        .catch(err => alert('Error al enviar: ' + err.text));
+      this.reset();
+    });
+  </script>
 </body>
 </html>
+```
