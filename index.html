@@ -19,7 +19,8 @@
     /* Reset mínimo */
     * {
       box-sizing: border-box;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
     }
     html, body {
       height: 100%;
@@ -66,11 +67,11 @@
     /* Galería */
     #cards-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 40px;         /* espacio aumentado */
       padding: 20px;
       position: relative;
-      z-index: 0; /* por encima del fondo */
+      z-index: 0;
     }
     .card {
       background: var(--segundario);
@@ -78,6 +79,7 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       transition: transform .2s, box-shadow .2s;
+      margin: 10px;     /* separación extra */
     }
     .card:hover {
       transform: translateY(-4px);
@@ -146,7 +148,7 @@
       color: var(--texto);
       cursor: pointer;
     }
-    /* Anula la onda en los popups */
+    /* Anula onda en popups */
     #popup-img, #purchase-img {
       animation: none !important;
       transform: none !important;
@@ -165,14 +167,12 @@
 </head>
 <body>
 
-  <!-- Fondo abstracto -->
   <div id="abstract-bg"></div>
 
   <header class="site-header">Colección de Cuadros</header>
 
   <div id="cards-container"></div>
 
-  <!-- Popup imagen -->
   <div id="image-popup" class="popup">
     <div class="popup-content">
       <span class="close-popup">&times;</span>
@@ -180,7 +180,6 @@
     </div>
   </div>
 
-  <!-- Popup compra -->
   <div id="purchase-popup" class="popup">
     <div class="popup-content">
       <span class="close-popup">&times;</span>
@@ -192,7 +191,7 @@
           <h2 id="purchase-title"></h2>
           <div id="purchase-price" style="margin:10px 0; font-weight:bold; color:var(--acento);"></div>
           <form id="purchase-form">
-            <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda" 
+            <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda"
               style="width:100%;height:80px;padding:8px;margin-bottom:10px;border:1px solid #ccc;border-radius:4px;"></textarea>
             <button type="submit" style="background:var(--btn-azul);color:#fff;border:none;
               padding:8px 16px;border-radius:4px;cursor:pointer;">Enviar</button>
@@ -290,3 +289,4 @@
   </script>
 </body>
 </html>
+```
