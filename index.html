@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Galería Abstracta</title>
   <style>
     body {
@@ -78,12 +78,13 @@
       z-index: 1000;
       max-width: 600px;
       width: 90%;
+      display: flex;
+      gap: 1rem;
     }
     .popup img {
       max-width: 45%;
       height: auto;
-      float: left;
-      margin-right: 2rem;
+      border-radius: 5px;
     }
     .popup textarea, .popup input[type="text"] {
       width: 100%;
@@ -92,6 +93,8 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       box-sizing: border-box;
+      resize: vertical;
+      font-family: Arial, sans-serif;
     }
     .popup-buttons {
       margin-top: 1rem;
@@ -119,7 +122,23 @@
       text-align: center;
       padding: 2rem;
     }
+    .success-message {
+      padding: 1rem;
+      margin-top: 1rem;
+      border: 1px solid green;
+      color: green;
+      font-weight: bold;
+      border-radius: 5px;
+    }
   </style>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init('e2kVQDAK-HAuURhku'); // Tu User ID (Public Key)
+    })();
+  </script>
 </head>
 <body>
   <header>
@@ -129,12 +148,20 @@
 
   <div class="overlay" id="overlay"></div>
   <div class="popup" id="popup">
-    <img id="popupImg" src="" alt="Cuadro Ampliado">
-    <div>
+    <img id="popupImg" src="" alt="Cuadro Ampliado" />
+    <div style="flex:1;">
       <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
       <div class="popup-buttons">
         <button class="buy-button" onclick="enviarMensaje()">Enviar</button>
-        <button class="buy-button large" onclick="confirmarCompra()">Comprar</button>
+        <button class="buy-button large" onclick="mostrarConfirmacionCompra()">Comprar</button>
+      </div>
+      <div id="confirmacionCompra" style="display:none; margin-top: 1rem;">
+        <p>¿Estás seguro de querer comprar este cuadro?</p>
+        <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" />
+        <button class="buy-button large" onclick="finalizarCompra()">Confirmar compra</button>
+      </div>
+      <div id="mensajeExito" class="success-message" style="display:none;">
+        ¡Compra simulada realizada con éxito! Gracias por tu interés.
       </div>
     </div>
   </div>
@@ -143,7 +170,7 @@
 
   <section class="contact">
     <h2>Contacto</h2>
-    <p>¿Interesado en un cuadro? Escríbeme a: <strong>tucuadro@ejemplo.com</strong></p>
+    <p>¿Interesado en un cuadro? Escríbeme a: <strong>miguel.cuadros.soporte@gmail.com</strong></p>
   </section>
 
   <footer>
@@ -152,6 +179,7 @@
 
   <script>
     let cuadroSeleccionado = null;
+    let mensajesEnviados = 0;
 
     async function cargarCuadros() {
       try {
@@ -159,11 +187,11 @@
         const cuadros = await response.json();
         const gallery = document.getElementById('gallery');
         gallery.innerHTML = '';
-        cuadros.forEach((cuadro, index) => {
+        cuadros.forEach((cuadro) => {
           const artDiv = document.createElement('div');
           artDiv.className = 'art-piece';
           artDiv.innerHTML = `
-            <a href="${cuadro.imagen}" target="_blank">
+            <a href="${cuadro.imagen}" target="_blank" rel="noopener noreferrer">
               <img src="${cuadro.imagen}" alt="${cuadro.titulo}">
             </a>
             <div class="info">
@@ -185,28 +213,55 @@
       document.getElementById('mensaje').value = '';
       document.getElementById('popup').style.display = 'flex';
       document.getElementById('overlay').style.display = 'block';
+
+      document.getElementById('confirmacionCompra').style.display = 'none';
+      document.getElementById('mensajeExito').style.display = 'none';
     }
 
     function enviarMensaje() {
-      const mensaje = document.getElementById('mensaje').value;
-      const mailto = `mailto:miguel.cuadros.soporte@gmail.com?subject=Consulta sobre cuadro&body=${encodeURIComponent(mensaje)}`;
-      window.location.href = mailto;
+      if (mensajesEnviados >= 3) {
+        alert('Has alcanzado el límite de 3 mensajes enviados. Por favor, espera antes de enviar más.');
+        return;
+      }
+
+      const mensaje = document.getElementById('mensaje').value.trim();
+      if (!mensaje) {
+        alert('Por favor, escribe un mensaje antes de enviar.');
+        return;
+      }
+
+      emailjs.send('service_3vsow58', 'template_mh5j9yd', { mensaje })
+        .then(() => {
+          mensajesEnviados++;
+          alert('Mensaje enviado correctamente');
+          document.getElementById('mensaje').value = '';
+        }, (error) => {
+          alert('Error al enviar el mensaje, intenta de nuevo.');
+          console.error(error);
+        });
     }
 
-    function confirmarCompra() {
-      const direccion = prompt('Introduce tu dirección de envío:');
-      if (direccion) {
-        const cantidad = cuadroSeleccionado.precio.replace(/[^0-9,.]/g, '').replace(',', '.');
-        const pago = `https://www.paypal.com/paypalme/Cuadros.Miguel/${cantidad}`;
-        window.open(pago, '_blank');
-        cerrarPopup();
+    function mostrarConfirmacionCompra() {
+      document.getElementById('confirmacionCompra').style.display = 'block';
+    }
+
+    function finalizarCompra() {
+      const direccion = document.getElementById('direccionEnvio').value.trim();
+      if (!direccion) {
+        alert('Por favor, introduce tu dirección de envío.');
+        return;
       }
+      // Compra simulada
+      document.getElementById('confirmacionCompra').style.display = 'none';
+      document.getElementById('mensajeExito').style.display = 'block';
     }
 
     function cerrarPopup() {
       document.getElementById('popup').style.display = 'none';
       document.getElementById('overlay').style.display = 'none';
     }
+
+    document.getElementById('overlay').addEventListener('click', cerrarPopup);
 
     cargarCuadros();
   </script>
