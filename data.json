@@ -23,5 +23,10 @@
     "titulo": "Carrera a oscuras",
     "precio": 15.00,
     "imagen": "https://i.imgur.com/ISRyIpS.jpeg"
+  },
+  {
+    "titulo": "Las figuras fantasma",
+    "precio": 10.00,
+    "imagen": "https://i.imgur.com/i4BuruD.jpeg"
   }
 ]
