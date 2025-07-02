@@ -18,5 +18,10 @@
     "titulo": "Mi amigo más real",
     "precio": 20.00,
     "imagen": "https://i.imgur.com/a2ptZca.jpeg"
+  },
+  {
+    "titulo": "Carrera a oscuras",
+    "precio": 15.00,
+    "imagen": "https://i.imgur.com/ISRyIpS.jpeg"
   }
 ]
