@@ -194,6 +194,37 @@
 
   <header class="site-header">Colección de Cuadros</header>
 
+  <!-- 1) Botón admin oculto -->
+  <button id="btn-admin" style="
+      position:fixed; bottom:20px; right:20px;
+      padding:8px 12px; font-size:1em;
+      display:none;
+    ">
+    ⚙ Ajustes
+  </button>
+
+  <!-- 2) Panel de ajustes -->
+  <div id="admin-panel" style="
+      position:fixed; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      background:#fff; padding:20px;
+      border:2px solid #333; display:none;
+      z-index:999;
+    ">
+    <h3>Panel de Ajustes</h3>
+    <label>
+      Color banner:
+      <input type="color" id="input-color-banner" value="#2a5d84">
+    </label><br/><br/>
+    <label>
+      Espacio entre cuadros:
+      <input type="range" id="input-gap" min="10" max="80" value="40">
+      <span id="label-gap">40px</span>
+    </label><br/><br/>
+    <button id="save-settings">Guardar</button>
+    <button id="close-admin">Cerrar</button>
+  </div>
+
   <div id="cards-container"></div>
 
   <div id="image-popup" class="popup">
@@ -388,6 +419,71 @@
         lblGap.textContent = localStorage.cardsGap;
       }
     });
+
+
+
+
+    // ADMIN FLOW
+    const PASS = 'miclave123'; // tu contraseña
+    window.addEventListener('load', () => {
+      // Si ya validaste antes, muestro botón
+      if (localStorage.isAdmin === 'true') {
+        document.getElementById('btn-admin').style.display = 'block';
+      } else {
+        // Al primer click: pido contraseña
+        document.getElementById('btn-admin').addEventListener('click', () => {
+          const p = prompt('Contraseña admin:');
+          if (p === PASS) {
+            localStorage.isAdmin = 'true';
+            document.getElementById('btn-admin').style.display = 'block';
+            abrirPanel();
+          }
+        });
+      }
+      // Si ya eres admin, clic abre panel
+      document.getElementById('btn-admin').addEventListener('click', abrirPanel);
+
+      // Botón cerrar panel
+      document.getElementById('close-admin')
+        .addEventListener('click', () => {
+          document.getElementById('admin-panel').style.display = 'none';
+        });
+
+      // Guardar ajustes
+      document.getElementById('save-settings')
+        .addEventListener('click', () => {
+          // Leer controles
+          const color = document.getElementById('input-color-banner').value;
+          const gap   = document.getElementById('input-gap').value + 'px';
+
+          // Aplicar CSS vars
+          document.documentElement.style.setProperty('--btn-azul', color);
+          document.getElementById('cards-container')
+            .style.setProperty('gap', gap);
+          document.getElementById('label-gap').textContent = gap;
+
+          // Opcional: persistir en localStorage
+          localStorage.bannerColor = color;
+          localStorage.cardsGap    = gap;
+
+          alert('Ajustes aplicados');
+        });
+
+      // Al cargar, si hay ajustes guardados los reaplico
+      if (localStorage.bannerColor) {
+        document.documentElement.style.setProperty('--btn-azul', localStorage.bannerColor);
+        document.getElementById('input-color-banner').value = localStorage.bannerColor;
+      }
+      if (localStorage.cardsGap) {
+        document.getElementById('cards-container').style.setProperty('gap', localStorage.cardsGap);
+        document.getElementById('input-gap').value = parseInt(localStorage.cardsGap);
+        document.getElementById('label-gap').textContent = localStorage.cardsGap;
+      }
+    });
+
+    function abrirPanel() {
+      document.getElementById('admin-panel').style.display = 'block';
+    }
   </script>
 </body>
 </html>
