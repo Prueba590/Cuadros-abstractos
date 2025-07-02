@@ -56,10 +56,14 @@
       color: white;
       border: none;
       padding: 0.5rem 1rem;
-      margin: 1rem;
+      margin: 1rem 0 0 0;
       border-radius: 5px;
       cursor: pointer;
       font-size: 0.9rem;
+      display: block;
+      width: 90%;
+      max-width: 180px;
+      text-align: center;
     }
     .popup, .image-popup {
       display: none;
@@ -173,9 +177,10 @@
     <img id="popupImg" src="" alt="Cuadro Ampliado" />
     <div style="flex:1;">
       <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
-      <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="margin-top: 1rem;" />
+      <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" />
       <div class="popup-buttons">
         <button class="buy-button" onclick="enviarMensaje()">Enviar</button>
+        <button class="buy-button" onclick="confirmarCompra()">Confirmar compra</button>
       </div>
       <div id="mensajeExito" class="success-message" style="display:none;">
         ¡Mensaje enviado correctamente!
@@ -297,6 +302,44 @@
       setTimeout(() => {
         successDiv.style.display = 'none';
       }, 4000);
+    }
+
+    function confirmarCompra() {
+      const direccion = document.getElementById('direccionEnvio').value.trim();
+      if (!direccion) {
+        alert('Por favor, introduce tu dirección de envío antes de confirmar la compra.');
+        return;
+      }
+      if (!cuadroSeleccionado) {
+        alert('Error: no hay cuadro seleccionado.');
+        return;
+      }
+
+      // Extraer precio en número, asumiendo formato "35€"
+      const precioTexto = cuadroSeleccionado.precio.replace(/[^\d.,]/g, '').replace(',', '.');
+      const precioNum = parseFloat(precioTexto);
+      if (isNaN(precioNum) || precioNum <= 0) {
+        alert('Precio no válido para el pago.');
+        return;
+      }
+
+      // Redirigir a PayPal para pago
+      const emailVendedor = 'miguel.cuadros.soporte@gmail.com'; // Cambia si quieres otro email
+      const nombreProducto = encodeURIComponent(cuadroSeleccionado.titulo || 'Cuadro Abstracto');
+      const precioPago = precioNum.toFixed(2);
+
+      // Link PayPal (botón de "Donar" o "Comprar ahora" usando enlace simple)
+      const paypalUrl = 
+        `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick` +
+        `&business=${encodeURIComponent(emailVendedor)}` +
+        `&item_name=${nombreProducto}` +
+        `&amount=${precioPago}` +
+        `&currency_code=EUR`;
+
+      // Confirmación simple con confirm()
+      if(confirm(`Vas a pagar ${precioPago} € por el cuadro.\n¿Quieres proceder al pago?`)){
+        window.location.href = paypalUrl;
+      }
     }
 
     function cerrarPopup() {
