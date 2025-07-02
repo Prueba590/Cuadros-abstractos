@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería Abstracta</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background-color: #111;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      padding: 2rem;
+    }
+    .art-piece {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+    .art-piece:hover {
+      transform: scale(1.02);
+    }
+    .art-piece img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .info {
+      padding: 1rem;
+    }
+    .info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .info p {
+      margin: 0.5rem 0 0;
+      font-size: 0.9rem;
+    }
+    footer {
+      background-color: #111;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    .contact {
+      text-align: center;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Galería Abstracta</h1>
+    <p>Cuadros inspirados en el gusto artístico de mi profesor de plástica</p>
+  </header>
+
+  <section class="gallery">
+    <div class="art-piece">
+      <img src="https://picsum.photos/400/300?random=1" alt="Cuadro Abstracto 1">
+      <div class="info">
+        <h3>Colores en Caos</h3>
+        <p>Precio: 25€</p>
+      </div>
+    </div>
+    <div class="art-piece">
+      <img src="https://picsum.photos/400/300?random=2" alt="Cuadro Abstracto 2">
+      <div class="info">
+        <h3>Sombras y Líneas</h3>
+        <p>Precio: 30€</p>
+      </div>
+    </div>
+    <div class="art-piece">
+      <img src="https://picsum.photos/400/300?random=3" alt="Cuadro Abstracto 3">
+      <div class="info">
+        <h3>Movimiento Estático</h3>
+        <p>Precio: 20€</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <h2>Contacto</h2>
+    <p>¿Interesado en un cuadro? Escríbeme a: <strong>tucuadro@ejemplo.com</strong></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Galería Abstracta - Proyecto personal de prueba</p>
+  </footer>
+</body>
+</html>
