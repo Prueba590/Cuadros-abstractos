@@ -37,6 +37,7 @@
       width: 100%;
       height: 200px;
       object-fit: cover;
+      cursor: pointer;
     }
     .info {
       padding: 1rem;
@@ -92,7 +93,9 @@
           const artDiv = document.createElement('div');
           artDiv.className = 'art-piece';
           artDiv.innerHTML = `
-            <img src="${cuadro.imagen}" alt="${cuadro.titulo}">
+            <a href="${cuadro.imagen}" target="_blank">
+              <img src="${cuadro.imagen}" alt="${cuadro.titulo}">
+            </a>
             <div class="info">
               <h3>${cuadro.titulo}</h3>
               <p>Precio: ${cuadro.precio}</p>
