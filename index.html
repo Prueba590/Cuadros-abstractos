@@ -68,28 +68,8 @@
     <p>Cuadros inspirados en el gusto artístico de mi profesor de plástica</p>
   </header>
 
-  <section class="gallery">
-    <div class="art-piece">
-      <img src="https://picsum.photos/400/300?random=1" alt="Cuadro Abstracto 1">
-      <div class="info">
-        <h3>Colores en Caos</h3>
-        <p>Precio: 25€</p>
-      </div>
-    </div>
-    <div class="art-piece">
-      <img src="https://picsum.photos/400/300?random=2" alt="Cuadro Abstracto 2">
-      <div class="info">
-        <h3>Sombras y Líneas</h3>
-        <p>Precio: 30€</p>
-      </div>
-    </div>
-    <div class="art-piece">
-      <img src="https://picsum.photos/400/300?random=3" alt="Cuadro Abstracto 3">
-      <div class="info">
-        <h3>Movimiento Estático</h3>
-        <p>Precio: 20€</p>
-      </div>
-    </div>
+  <section class="gallery" id="gallery">
+    <!-- Los cuadros se cargarán aquí dinámicamente -->
   </section>
 
   <section class="contact">
@@ -100,5 +80,31 @@
   <footer>
     <p>&copy; 2025 Galería Abstracta - Proyecto personal de prueba</p>
   </footer>
+
+  <script>
+    async function cargarCuadros() {
+      try {
+        const response = await fetch('cuadros.json');
+        const cuadros = await response.json();
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = '';
+        cuadros.forEach(cuadro => {
+          const artDiv = document.createElement('div');
+          artDiv.className = 'art-piece';
+          artDiv.innerHTML = `
+            <img src="${cuadro.imagen}" alt="${cuadro.titulo}">
+            <div class="info">
+              <h3>${cuadro.titulo}</h3>
+              <p>Precio: ${cuadro.precio}</p>
+            </div>
+          `;
+          gallery.appendChild(artDiv);
+        });
+      } catch (error) {
+        console.error('Error cargando cuadros:', error);
+      }
+    }
+    cargarCuadros();
+  </script>
 </body>
 </html>
