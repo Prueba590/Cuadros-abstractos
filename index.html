@@ -5,81 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Colección de Cuadros</title>
   <style>
-    /* Colores base */
     :root {
       --fondo: #f0ece3;
-      --acento: #a67c52;
-      --segundario: #fff;
       --texto: #333;
       --btn-verde: #3a7d44;
-      --btn-azul: #2a5d84;   /* azul para botones y header */
+      --btn-azul: #2a5d84;
       --footer-bg: #e2ded6;
     }
-
-    /* Reset mínimo */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html, body {
-      height: 100%;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     body {
+      position: relative;
       font-family: 'Segoe UI', sans-serif;
       background: var(--fondo);
       color: var(--texto);
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Fondo abstracto */
+    /* Fondo dinámico */
     #abstract-bg {
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: -1;
-      overflow: hidden;
+      z-index: -1; overflow: hidden;
     }
-    .abstract-shape {
+    .abstract-shape, .splotch-shape {
       position: absolute;
-      border-radius: 50%;
       opacity: 0.4;
       animation: float 8s ease-in-out infinite;
     }
+    .splotch-shape {
+      opacity: 0.3;
+      filter: blur(1px);
+      animation-duration: 12s;
+    }
     @keyframes float {
       0%   { transform: translateY(0) rotate(0deg); }
-      50%  { transform: translateY(-20px) rotate(180deg); }
+      50%  { transform: translateY(-15px) rotate(180deg); }
       100% { transform: translateY(0) rotate(360deg); }
     }
 
-    /* Encabezado */
     .site-header {
-      background: var(--btn-azul);  /* ahora azul */
-      color: var(--segundario);
+      background: var(--btn-azul);
+      color: #fff;
       text-align: center;
-      padding: 20px;
-      font-size: 2em;
+      padding: 20px; font-size: 2em;
       letter-spacing: 2px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Galería */
     #cards-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 40px;  /* espacio aumentado */
+      grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+      gap: 40px;
       padding: 20px;
-      position: relative;
-      z-index: 0;
+      position: relative; z-index: 0;
     }
     .card {
-      background: var(--segundario);
+      background: #fff;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       transition: transform .2s, box-shadow .2s;
-      margin: 10px;  /* separación extra */
+      margin: 10px;
     }
     .card:hover {
       transform: translateY(-4px);
@@ -100,13 +87,12 @@
       text-align: center;
     }
     .card-content h3 {
-      margin-bottom: 6px;
-      font-size: 1.1em;
+      margin-bottom: 6px; font-size: 1.1em;
     }
     .card-content .price {
       margin-bottom: 12px;
-      color: var(--acento);
       font-weight: bold;
+      color: var(--btn-azul);
     }
     .btn-buy {
       background: var(--btn-verde);
@@ -117,44 +103,34 @@
       cursor: pointer;
       transition: background .2s;
     }
-    .btn-buy:hover {
-      background: #2e6538;
-    }
+    .btn-buy:hover { background: #2e6538; }
 
-    /* Popups */
     .popup {
       display: none;
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
+      justify-content: center; align-items: center;
       z-index: 10;
     }
     .popup-content {
-      background: var(--segundario);
+      position: relative;
+      background: #fff;
       padding: 20px;
       border-radius: 6px;
-      max-width: 90%;
-      max-height: 90%;
+      max-width: 90%; max-height: 90%;
       overflow: auto;
-      position: relative;
     }
     .close-popup {
-      position: absolute;
-      top: 10px; right: 10px;
-      font-size: 1.5em;
-      color: var(--texto);
+      position: absolute; top: 10px; right: 10px;
+      font-size: 1.5em; color: var(--texto);
       cursor: pointer;
     }
-    /* Anula onda en popups */
     #popup-img, #purchase-img {
       animation: none !important;
       transform: none !important;
     }
 
-    /* Footer */
     .site-footer {
       background: var(--footer-bg);
       text-align: center;
@@ -168,9 +144,7 @@
 <body>
 
   <div id="abstract-bg"></div>
-
   <header class="site-header">Colección de Cuadros</header>
-
   <div id="cards-container"></div>
 
   <div id="image-popup" class="popup">
@@ -189,12 +163,15 @@
         </div>
         <div style="flex:1 1 200px;">
           <h2 id="purchase-title"></h2>
-          <div id="purchase-price" style="margin:10px 0; font-weight:bold; color:var(--acento);"></div>
+          <div id="purchase-price" style="margin:10px 0; font-weight:bold; color:var(--btn-azul);"></div>
           <form id="purchase-form">
             <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda"
-              style="width:100%;height:80px;padding:8px;margin-bottom:10px;border:1px solid #ccc;border-radius:4px;"></textarea>
-            <button type="submit" style="background:var(--btn-azul);color:#fff;border:none;
-              padding:8px 16px;border-radius:4px;cursor:pointer;">Enviar</button>
+              style="width:100%;height:80px;padding:8px;margin-bottom:10px;
+                     border:1px solid #ccc;border-radius:4px;"></textarea>
+            <button type="submit" style="background:var(--btn-azul);color:#fff;
+                    border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">
+              Enviar
+            </button>
           </form>
           <button id="paypal-btn" class="btn-buy">Comprar</button>
         </div>
@@ -207,37 +184,54 @@
   </footer>
 
   <script>
-    // Inicializa EmailJS
     emailjs.init('e2kVQDAK-HAuURhku');
     const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
-    // Generar fondo abstracto
-    function randInt(m,M){ return Math.floor(Math.random()*(M-m+1))+m; }
+    function randInt(m, M){ return Math.floor(Math.random()*(M-m+1))+m; }
     function randColor(){
-      const pal = ['#f28c8c','#8cf2c3','#f2e78c','#8ca5f2','#e88cf2','#f2b48c'];
-      return pal[randInt(0,pal.length-1)];
+      const pal = ['#f28c8c','#8cf2c3','#f2e78c',
+                   '#8ca5f2','#e88cf2','#f2b48c'];
+      return pal[randInt(0, pal.length-1)];
     }
-    document.addEventListener('DOMContentLoaded',()=>{
+
+    document.addEventListener('DOMContentLoaded', ()=>{
       const bg = document.getElementById('abstract-bg');
-      for(let i=0;i<20;i++){
-        const div = document.createElement('div');
-        const s = randInt(60,150);
-        div.className = 'abstract-shape';
-        div.style.width = s+'px';
-        div.style.height = s+'px';
-        div.style.background = randColor();
-        div.style.top  = randInt(-20,80) + '%';
-        div.style.left = randInt(-20,120)+ '%';
-        bg.appendChild(div);
+
+      // Círculos
+      for(let i=0; i<20; i++){
+        const c = document.createElement('div');
+        const s = randInt(60, 180);
+        c.className = 'abstract-shape';
+        c.style.width = s+'px';
+        c.style.height = s+'px';
+        c.style.background = randColor();
+        c.style.top  = randInt(-20, 90) + '%';
+        c.style.left = randInt(-20, 120)+ '%';
+        bg.appendChild(c);
+      }
+
+      // Manchas de pintura
+      for(let i=0; i<30; i++){
+        const m = document.createElement('div');
+        const w = randInt(30, 80), h = randInt(30, 80);
+        m.className = 'splotch-shape';
+        m.style.width = w+'px';
+        m.style.height = h+'px';
+        m.style.background = randColor();
+        m.style.borderRadius = `${randInt(20,80)}% ${randInt(20,80)}% ` +
+                               `${randInt(20,80)}% ${randInt(20,80)}%`;
+        m.style.top  = randInt(-10, 85) + '%';
+        m.style.left = randInt(-10, 110)+ '%';
+        bg.appendChild(m);
       }
     });
 
-    // Carga y muestra cuadros
+    // Carga y pinta cuadros
     fetch('data.json')
-      .then(r=>r.json())
-      .then(data=>{
+      .then(r => r.json())
+      .then(data => {
         const cont = document.getElementById('cards-container');
-        data.forEach(item=>{
+        data.forEach(item => {
           const c = document.createElement('div');
           c.className = 'card';
           c.innerHTML = `
@@ -249,14 +243,15 @@
             </div>`;
           cont.appendChild(c);
 
-          c.querySelector('img').onclick = ()=>{
+          c.querySelector('img').onclick = () => {
             document.getElementById('popup-img').src = item.imagen;
             document.getElementById('image-popup').style.display = 'flex';
           };
-          c.querySelector('.btn-buy').onclick = ()=>{
+          c.querySelector('.btn-buy').onclick = () => {
             document.getElementById('purchase-img').src = item.imagen;
             document.getElementById('purchase-title').textContent = item.titulo;
-            document.getElementById('purchase-price').textContent = item.precio.toFixed(2)+' €';
+            document.getElementById('purchase-price').textContent =
+              item.precio.toFixed(2) + ' €';
             const params = new URLSearchParams({
               cmd: '_xclick',
               business: PAYPAL_EMAIL,
@@ -264,26 +259,26 @@
               amount: item.precio.toFixed(2),
               currency_code: 'EUR'
             });
-            document.getElementById('paypal-btn').onclick = ()=>{
-              window.open('https://www.paypal.com/cgi-bin/webscr?'+params,'_blank');
+            document.getElementById('paypal-btn').onclick = () => {
+              window.open('https://www.paypal.com/cgi-bin/webscr?' + params, '_blank');
             };
             document.getElementById('purchase-popup').style.display = 'flex';
           };
         });
       })
-      .catch(err=>console.error('Fetch error:', err));
+      .catch(err => console.error('Fetch error:', err));
 
-    // Cerrar popups
-    document.querySelectorAll('.close-popup').forEach(x=>{
-      x.onclick = ()=> x.closest('.popup').style.display = 'none';
-    });
+    // Cierra popups
+    document.querySelectorAll('.close-popup').forEach(x =>
+      x.onclick = () => x.closest('.popup').style.display = 'none'
+    );
 
-    // Envía formulario con EmailJS
+    // Envía formulario
     document.getElementById('purchase-form').onsubmit = function(e){
       e.preventDefault();
       emailjs.sendForm('service_3vsow58','template_mh5j9yd', this)
-        .then(()=> alert('Mensaje enviado correctamente'))
-        .catch(e=> alert('Error al enviar: '+e.text));
+        .then(() => alert('Mensaje enviado correctamente'))
+        .catch(e => alert('Error al enviar: ' + e.text));
       this.reset();
     };
   </script>
