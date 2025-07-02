@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Colección de Cuadros</title>
   <style>
+    /* Colores base */
     :root {
       --fondo: #f0ece3;
       --acento: #a67c52;
@@ -14,26 +15,29 @@
       --btn-azul: #2a5d84;
       --footer-bg: #e2ded6;
     }
-    /* Asegura que el body flex funcione */
-    html, body {
-      height: 100%;
+
+    /* Reset mínimo */
+    * {
+      box-sizing: border-box;
       margin: 0; padding: 0;
     }
+    html, body {
+      height: 100%;
+    }
     body {
-      display: flex;
-      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
       background: var(--fondo);
       color: var(--texto);
-      font-family: 'Segoe UI', sans-serif;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Fondo abstracto detrás de todo */
+    /* Fondo abstracto */
     #abstract-bg {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: -10;
+      z-index: -1;
       overflow: hidden;
     }
     .abstract-shape {
@@ -48,7 +52,7 @@
       100% { transform: translateY(0) rotate(360deg); }
     }
 
-    /* Header */
+    /* Encabezado */
     .site-header {
       background: var(--acento);
       color: var(--segundario);
@@ -59,16 +63,14 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Galería de tarjetas */
+    /* Galería */
     #cards-container {
-      background: transparent;
       display: grid;
       grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-      gap: 24px;
+      gap: 20px;
       padding: 20px;
-      flex: 1;              /* ocupar espacio restante */
       position: relative;
-      z-index: 1;           /* por encima del fondo */
+      z-index: 0; /* por encima del fondo */
     }
     .card {
       background: var(--segundario);
@@ -113,7 +115,9 @@
       cursor: pointer;
       transition: background .2s;
     }
-    .btn-buy:hover { background: #2e6538; }
+    .btn-buy:hover {
+      background: #2e6538;
+    }
 
     /* Popups */
     .popup {
@@ -142,7 +146,7 @@
       color: var(--texto);
       cursor: pointer;
     }
-    /* Desactivar ondulación dentro del popup */
+    /* Anula la onda en los popups */
     #popup-img, #purchase-img {
       animation: none !important;
       transform: none !important;
@@ -164,13 +168,11 @@
   <!-- Fondo abstracto -->
   <div id="abstract-bg"></div>
 
-  <header class="site-header">
-    Colección de Cuadros
-  </header>
+  <header class="site-header">Colección de Cuadros</header>
 
   <div id="cards-container"></div>
 
-  <!-- Popup imagen ampliada -->
+  <!-- Popup imagen -->
   <div id="image-popup" class="popup">
     <div class="popup-content">
       <span class="close-popup">&times;</span>
@@ -178,20 +180,22 @@
     </div>
   </div>
 
-  <!-- Popup compra/oferta -->
+  <!-- Popup compra -->
   <div id="purchase-popup" class="popup">
     <div class="popup-content">
       <span class="close-popup">&times;</span>
-      <div class="purchase-content">
-        <div class="left">
-          <img id="purchase-img" src="" alt="Producto"/>
+      <div style="display:flex; flex-wrap:wrap; gap:20px;">
+        <div style="flex:1 1 200px;">
+          <img id="purchase-img" src="" alt="Producto" style="width:100%;"/>
         </div>
-        <div class="right">
+        <div style="flex:1 1 200px;">
           <h2 id="purchase-title"></h2>
-          <div class="price" id="purchase-price"></div>
+          <div id="purchase-price" style="margin:10px 0; font-weight:bold; color:var(--acento);"></div>
           <form id="purchase-form">
-            <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda"></textarea>
-            <button type="submit" class="btn-send">Enviar</button>
+            <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda" 
+              style="width:100%;height:80px;padding:8px;margin-bottom:10px;border:1px solid #ccc;border-radius:4px;"></textarea>
+            <button type="submit" style="background:var(--btn-azul);color:#fff;border:none;
+              padding:8px 16px;border-radius:4px;cursor:pointer;">Enviar</button>
           </form>
           <button id="paypal-btn" class="btn-buy">Comprar</button>
         </div>
@@ -200,56 +204,89 @@
   </div>
 
   <footer class="site-footer">
-    Para errores y problemas, contáctanos en: miguel.cuadros.soporte@gmail.com
+    Para errores y problemas: miguel.cuadros.soporte@gmail.com
   </footer>
 
   <script>
-    // Configuración EmailJS y PayPal
+    // EmailJS init
     emailjs.init('e2kVQDAK-HAuURhku');
     const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
-    // Genera fondo abstracto
-    function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-    function randomColor(){
+    // Generar fondo abstracto
+    function randInt(m,M){return Math.floor(Math.random()*(M-m+1))+m;}
+    function randColor(){
       const pal = ['#f28c8c','#8cf2c3','#f2e78c','#8ca5f2','#e88cf2','#f2b48c'];
-      return pal[randomInt(0,pal.length-1)];
+      return pal[randInt(0,pal.length-1)];
     }
-    window.addEventListener('DOMContentLoaded',()=>{
+    document.addEventListener('DOMContentLoaded',()=>{
       const bg = document.getElementById('abstract-bg');
-      for(let i=0;i<25;i++){
-        const s=document.createElement('div');
-        const size=randomInt(60,180);
-        s.className='abstract-shape';
-        s.style.width=`${size}px`;
-        s.style.height=`${size}px`;
-        s.style.background=randomColor();
-        s.style.top=`${randomInt(-20,90)}%`;
-        s.style.left=`${randomInt(-20,120)}%`;
-        bg.appendChild(s);
+      for(let i=0;i<20;i++){
+        const div = document.createElement('div');
+        const s = randInt(60,150);
+        div.className = 'abstract-shape';
+        div.style.width = s+'px';
+        div.style.height = s+'px';
+        div.style.background = randColor();
+        div.style.top  = randInt(-20,80) + '%';
+        div.style.left = randInt(-20,120)+ '%';
+        bg.appendChild(div);
       }
     });
 
-    // Carga y pinta los cuadros
+    // Pintar cuadros desde data.json
     fetch('data.json')
       .then(r=>r.json())
       .then(data=>{
         const cont = document.getElementById('cards-container');
         data.forEach(item=>{
-          const card=document.createElement('div');
-          card.className='card';
-          card.innerHTML=`
-            <img src="${item.imagen}" alt="${item.titulo}" />
+          const c = document.createElement('div');
+          c.className = 'card';
+          c.innerHTML = `
+            <img src="${item.imagen}" alt="${item.titulo}"/>
             <div class="card-content">
               <h3>${item.titulo}</h3>
               <div class="price">${item.precio.toFixed(2)} €</div>
               <button class="btn-buy">Comprar</button>
             </div>`;
-          cont.appendChild(card);
+          cont.appendChild(c);
 
           // Popup imagen
-          card.querySelector('img').onclick = ()=>{
+          c.querySelector('img').onclick = ()=>{
             document.getElementById('popup-img').src = item.imagen;
             document.getElementById('image-popup').style.display = 'flex';
           };
+          // Popup compra
+          c.querySelector('.btn-buy').onclick = ()=>{
+            document.getElementById('purchase-img').src          = item.imagen;
+            document.getElementById('purchase-title').textContent = item.titulo;
+            document.getElementById('purchase-price').textContent = item.precio.toFixed(2)+' €';
+            const p = new URLSearchParams({
+              cmd:'_xclick', business: PAYPAL_EMAIL,
+              item_name:item.titulo, amount:item.precio.toFixed(2),
+              currency_code:'EUR'
+            });
+            document.getElementById('paypal-btn').onclick = ()=>{
+              window.open('https://www.paypal.com/cgi-bin/webscr?'+p,'_blank');
+            };
+            document.getElementById('purchase-popup').style.display = 'flex';
+          };
+        });
+      })
+      .catch(err=>console.error('Fetch error:',err));
 
-          //
+    // Cerrar popups
+    document.querySelectorAll('.close-popup').forEach(x=>{
+      x.onclick = ()=> x.closest('.popup').style.display='none';
+    });
+
+    // Enviar form EmailJS
+    document.getElementById('purchase-form').onsubmit = function(e){
+      e.preventDefault();
+      emailjs.sendForm('service_3vsow58','template_mh5j9yd', this)
+        .then(()=>alert('Mensaje enviado'))
+        .catch(e=>alert('Error: '+e.text));
+      this.reset();
+    };
+  </script>
+</body>
+</html>
