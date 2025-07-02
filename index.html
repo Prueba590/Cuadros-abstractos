@@ -61,7 +61,7 @@
   }
 
   /* Popup compra lado a lado */
-  #popup {
+  #popupCompra {
     display: none;
     position: fixed;
     top: 50%; left: 50%;
@@ -78,7 +78,7 @@
     display: flex;
     gap: 2rem;
   }
-  #popup img {
+  #popupCompra img {
     max-width: 40%;
     height: auto;
     border-radius: 5px;
@@ -88,7 +88,7 @@
     display: flex;
     flex-direction: column;
   }
-  #popup textarea, #popup input[type="text"] {
+  #popupCompra textarea, #popupCompra input[type="text"] {
     width: 100%;
     margin-top: 0.5rem;
     padding: 0.5rem;
@@ -105,7 +105,7 @@
   }
 
   /* Popup solo imagen ampliada */
-  #popupImageOnly {
+  #popupImagen {
     display: none;
     position: fixed;
     top: 50%; left: 50%;
@@ -120,7 +120,7 @@
     box-sizing: border-box;
     text-align: center;
   }
-  #popupImageOnly img {
+  #popupImagen img {
     max-width: 100%;
     max-height: 80vh;
     border-radius: 5px;
@@ -175,32 +175,32 @@
 <div class="overlay" id="overlay"></div>
 
 <!-- Popup compra -->
-<div class="popup" id="popup">
-  <span class="close-btn" id="closePopup">&times;</span>
+<div id="popupCompra">
+  <span class="close-btn" id="closePopupCompra">&times;</span>
   
-  <img id="popupImg" src="" alt="Cuadro Ampliado" />
+  <img id="popupImgCompra" src="" alt="Cuadro Ampliado" />
   
   <div class="popup-content">
-    <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
+    <textarea id="mensajeCompra" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
     <div class="popup-buttons">
-      <button id="btnEnviarMensaje">Enviar mensaje</button>
+      <button id="btnEnviarMensajeCompra">Enviar mensaje</button>
     </div>
 
-    <div id="mensajeExito" class="success-message" style="display:none; margin-top: 1rem;">
+    <div id="mensajeExitoCompra" class="success-message" style="display:none;">
       ¡Mensaje enviado correctamente!
     </div>
 
-    <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="display:none; margin-top: 1rem;" />
-    <div class="popup-buttons" id="confirmCompraDiv" style="display:none;">
+    <input type="text" id="direccionEnvioCompra" placeholder="Introduce tu dirección de envío" style="display:none; margin-top: 1rem;" />
+    <div class="popup-buttons" id="confirmCompraDivCompra" style="display:none;">
       <button id="btnConfirmarCompra">Confirmar compra</button>
     </div>
   </div>
 </div>
 
 <!-- Popup solo imagen -->
-<div class="popup" id="popupImageOnly">
-  <span class="close-btn" id="closePopupImageOnly">&times;</span>
-  <img id="popupImageOnlyImg" src="" alt="Imagen Ampliada" />
+<div id="popupImagen">
+  <span class="close-btn" id="closePopupImagen">&times;</span>
+  <img id="popupImgSolo" src="" alt="Imagen Ampliada" />
 </div>
 
 <section class="gallery" id="gallery"></section>
@@ -215,7 +215,6 @@
 </footer>
 
 <script>
-  // Inicializa EmailJS
   emailjs.init('e2kVQDAK-HAuURhku');
 
   let cuadroSeleccionado = null;
@@ -239,14 +238,12 @@
           </div>
         `;
 
-        // Al clicar la imagen, abrir solo imagen ampliada
         artDiv.querySelector('img').addEventListener('click', () => {
           abrirPopupImagenSolo(cuadro.imagen, cuadro.titulo);
         });
 
-        // Al clicar botón comprar, abrir popup compra
         artDiv.querySelector('.buy-button').addEventListener('click', () => {
-          mostrarPopup(cuadro);
+          abrirPopupCompra(cuadro);
         });
 
         gallery.appendChild(artDiv);
@@ -256,55 +253,57 @@
     }
   }
 
-  function mostrarPopup(cuadro) {
+  function abrirPopupCompra(cuadro) {
     cuadroSeleccionado = cuadro;
 
-    const popup = document.getElementById('popup');
-    document.getElementById('popupImg').src = cuadro.imagen;
-    document.getElementById('popupImg').alt = cuadro.titulo;
-    document.getElementById('mensaje').value = '';
-    document.getElementById('direccionEnvio').value = '';
-    document.getElementById('mensajeExito').style.display = 'none';
+    document.getElementById('popupImgCompra').src = cuadro.imagen;
+    document.getElementById('popupImgCompra').alt = cuadro.titulo;
 
-    // Mostrar textarea y botón enviar, ocultar input dirección y botón confirmar compra
-    document.getElementById('mensaje').style.display = 'block';
-    document.getElementById('btnEnviarMensaje').style.display = 'inline-block';
-    document.getElementById('direccionEnvio').style.display = 'none';
-    document.getElementById('confirmCompraDiv').style.display = 'none';
+    // Reset formulario y estados
+    const mensajeCompra = document.getElementById('mensajeCompra');
+    mensajeCompra.value = '';
+    mensajeCompra.style.display = 'block';
 
-    popup.style.display = 'flex';
+    document.getElementById('btnEnviarMensajeCompra').style.display = 'inline-block';
+    document.getElementById('direccionEnvioCompra').style.display = 'none';
+    document.getElementById('confirmCompraDivCompra').style.display = 'none';
+
+    document.getElementById('mensajeExitoCompra').style.display = 'none';
+    document.getElementById('direccionEnvioCompra').value = '';
+
+    document.getElementById('popupCompra').style.display = 'flex';
     document.getElementById('overlay').style.display = 'block';
   }
 
   function cerrarPopup() {
-    document.getElementById('popup').style.display = 'none';
-    document.getElementById('popupImageOnly').style.display = 'none';
+    document.getElementById('popupCompra').style.display = 'none';
+    document.getElementById('popupImagen').style.display = 'none';
     document.getElementById('overlay').style.display = 'none';
-    document.getElementById('mensajeExito').style.display = 'none';
+    document.getElementById('mensajeExitoCompra').style.display = 'none';
     cuadroSeleccionado = null;
   }
 
-  document.getElementById('closePopup').addEventListener('click', cerrarPopup);
-  document.getElementById('closePopupImageOnly').addEventListener('click', cerrarPopup);
+  document.getElementById('closePopupCompra').addEventListener('click', cerrarPopup);
+  document.getElementById('closePopupImagen').addEventListener('click', cerrarPopup);
   document.getElementById('overlay').addEventListener('click', cerrarPopup);
 
   function abrirPopupImagenSolo(imagenSrc, titulo) {
-    const popupImgOnly = document.getElementById('popupImageOnly');
-    const imgElem = document.getElementById('popupImageOnlyImg');
+    const popupImagen = document.getElementById('popupImagen');
+    const imgElem = document.getElementById('popupImgSolo');
     imgElem.src = imagenSrc;
     imgElem.alt = titulo;
-    popupImgOnly.style.display = 'block';
+    popupImagen.style.display = 'block';
     document.getElementById('overlay').style.display = 'block';
   }
 
   // Enviar mensaje con EmailJS
-  document.getElementById('btnEnviarMensaje').addEventListener('click', () => {
+  document.getElementById('btnEnviarMensajeCompra').addEventListener('click', () => {
     if (mensajesEnviados >= 3) {
       alert('Has alcanzado el límite de 3 mensajes enviados. Por favor, espera antes de enviar más.');
       return;
     }
 
-    const mensajeElem = document.getElementById('mensaje');
+    const mensajeElem = document.getElementById('mensajeCompra');
     const mensaje = mensajeElem.value.trim();
     if (!mensaje) {
       alert('Por favor, escribe un mensaje antes de enviar.');
@@ -328,11 +327,11 @@
 
       // Ocultar textarea y botón enviar
       mensajeElem.style.display = 'none';
-      document.getElementById('btnEnviarMensaje').style.display = 'none';
+      document.getElementById('btnEnviarMensajeCompra').style.display = 'none';
 
       // Mostrar input dirección y botón confirmar compra
-      document.getElementById('direccionEnvio').style.display = 'block';
-      document.getElementById('confirmCompraDiv').style.display = 'block';
+      document.getElementById('direccionEnvioCompra').style.display = 'block';
+      document.getElementById('confirmCompraDivCompra').style.display = 'block';
 
     }).catch((error) => {
       alert('Error al enviar el mensaje, intenta de nuevo.');
@@ -341,7 +340,7 @@
   });
 
   function mostrarMensajeEnviado() {
-    const successDiv = document.getElementById('mensajeExito');
+    const successDiv = document.getElementById('mensajeExitoCompra');
     successDiv.style.display = 'block';
     setTimeout(() => {
       successDiv.style.display = 'none';
@@ -350,7 +349,7 @@
 
   // Confirmar compra y redirigir a PayPal
   document.getElementById('btnConfirmarCompra').addEventListener('click', () => {
-    const direccion = document.getElementById('direccionEnvio').value.trim();
+    const direccion = document.getElementById('direccionEnvioCompra').value.trim();
     if (!direccion) {
       alert('Por favor, introduce tu dirección de envío antes de confirmar la compra.');
       return;
