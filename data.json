@@ -28,5 +28,15 @@
     "titulo": "Las figuras fantasma",
     "precio": 10.00,
     "imagen": "https://i.imgur.com/i4BuruD.jpeg"
-  }
+  },
+  {
+    "titulo": "Kike en el multiverso de los Kikes pt1",
+    "precio": 20.00,
+    "imagen": "https://i.imgur.com/EUWJ3SX.jpeg"
+  },
+  {
+    "titulo": "Kike en el multiverso de los Kikes pt2",
+    "precio": 20.00,
+    "imagen": "https://i.imgur.com/hSzKXr2.jpeg"
+  }  
 ]
