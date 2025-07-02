@@ -48,5 +48,10 @@
     "titulo": "Clase de matemáticas",
     "precio": 20.00,
     "imagen": "https://i.imgur.com/S54CMu6.jpeg"
-  }
+  },
+  {
+    "titulo": "La vida submarina",
+    "precio": 10.00,
+    "imagen": "https://i.imgur.com/XXrPJ3R.jpeg"
+  } 
 ]
