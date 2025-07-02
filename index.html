@@ -12,7 +12,7 @@
       --segundario: #fff;
       --texto: #333;
       --btn-verde: #3a7d44;
-      --btn-azul: #2a5d84;
+      --btn-azul: #2a5d84;   /* azul para botones y header */
       --footer-bg: #e2ded6;
     }
 
@@ -55,7 +55,7 @@
 
     /* Encabezado */
     .site-header {
-      background: var(--acento);
+      background: var(--btn-azul);  /* ahora azul */
       color: var(--segundario);
       text-align: center;
       padding: 20px;
@@ -68,7 +68,7 @@
     #cards-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 40px;         /* espacio aumentado */
+      gap: 40px;  /* espacio aumentado */
       padding: 20px;
       position: relative;
       z-index: 0;
@@ -79,7 +79,7 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       transition: transform .2s, box-shadow .2s;
-      margin: 10px;     /* separación extra */
+      margin: 10px;  /* separación extra */
     }
     .card:hover {
       transform: translateY(-4px);
@@ -207,12 +207,12 @@
   </footer>
 
   <script>
-    // EmailJS init
+    // Inicializa EmailJS
     emailjs.init('e2kVQDAK-HAuURhku');
     const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
     // Generar fondo abstracto
-    function randInt(m,M){return Math.floor(Math.random()*(M-m+1))+m;}
+    function randInt(m,M){ return Math.floor(Math.random()*(M-m+1))+m; }
     function randColor(){
       const pal = ['#f28c8c','#8cf2c3','#f2e78c','#8ca5f2','#e88cf2','#f2b48c'];
       return pal[randInt(0,pal.length-1)];
@@ -232,7 +232,7 @@
       }
     });
 
-    // Pintar cuadros desde data.json
+    // Carga y muestra cuadros
     fetch('data.json')
       .then(r=>r.json())
       .then(data=>{
@@ -249,44 +249,43 @@
             </div>`;
           cont.appendChild(c);
 
-          // Popup imagen
           c.querySelector('img').onclick = ()=>{
             document.getElementById('popup-img').src = item.imagen;
             document.getElementById('image-popup').style.display = 'flex';
           };
-          // Popup compra
           c.querySelector('.btn-buy').onclick = ()=>{
-            document.getElementById('purchase-img').src          = item.imagen;
+            document.getElementById('purchase-img').src = item.imagen;
             document.getElementById('purchase-title').textContent = item.titulo;
             document.getElementById('purchase-price').textContent = item.precio.toFixed(2)+' €';
-            const p = new URLSearchParams({
-              cmd:'_xclick', business: PAYPAL_EMAIL,
-              item_name:item.titulo, amount:item.precio.toFixed(2),
-              currency_code:'EUR'
+            const params = new URLSearchParams({
+              cmd: '_xclick',
+              business: PAYPAL_EMAIL,
+              item_name: item.titulo,
+              amount: item.precio.toFixed(2),
+              currency_code: 'EUR'
             });
             document.getElementById('paypal-btn').onclick = ()=>{
-              window.open('https://www.paypal.com/cgi-bin/webscr?'+p,'_blank');
+              window.open('https://www.paypal.com/cgi-bin/webscr?'+params,'_blank');
             };
             document.getElementById('purchase-popup').style.display = 'flex';
           };
         });
       })
-      .catch(err=>console.error('Fetch error:',err));
+      .catch(err=>console.error('Fetch error:', err));
 
     // Cerrar popups
     document.querySelectorAll('.close-popup').forEach(x=>{
-      x.onclick = ()=> x.closest('.popup').style.display='none';
+      x.onclick = ()=> x.closest('.popup').style.display = 'none';
     });
 
-    // Enviar form EmailJS
+    // Envía formulario con EmailJS
     document.getElementById('purchase-form').onsubmit = function(e){
       e.preventDefault();
       emailjs.sendForm('service_3vsow58','template_mh5j9yd', this)
-        .then(()=>alert('Mensaje enviado'))
-        .catch(e=>alert('Error: '+e.text));
+        .then(()=> alert('Mensaje enviado correctamente'))
+        .catch(e=> alert('Error al enviar: '+e.text));
       this.reset();
     };
   </script>
 </body>
 </html>
-```
