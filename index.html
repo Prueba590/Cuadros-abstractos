@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Galería Abstracta</title>
+
 <style>
   body {
     margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; color: #333;
@@ -58,29 +59,38 @@
     max-width: 180px;
     text-align: center;
   }
-  .popup {
+
+  /* Popup compra lado a lado */
+  #popup {
     display: none;
     position: fixed;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 2rem;
+    padding: 1.5rem 2rem;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     z-index: 1000;
     max-width: 700px;
     width: 90%;
     box-sizing: border-box;
+
+    display: flex;
+    gap: 2rem;
   }
-  .popup img {
-    max-width: 100%;
+  #popup img {
+    max-width: 40%;
     height: auto;
     border-radius: 5px;
-    margin-bottom: 1rem;
   }
-  .popup textarea, .popup input[type="text"] {
+  .popup-content {
+    flex: 1; /* espacio restante */
+    display: flex;
+    flex-direction: column;
+  }
+  #popup textarea, #popup input[type="text"] {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -90,19 +100,32 @@
     font-size: 1rem;
   }
   .popup-buttons {
-    margin-top: 1rem;
+    margin-top: auto;
     text-align: right;
   }
-  .popup-buttons button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-left: 0.5rem;
+
+  /* Popup solo imagen ampliada */
+  #popupImageOnly {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    z-index: 1001;
+    max-width: 90vw;
+    max-height: 90vh;
+    box-sizing: border-box;
+    text-align: center;
   }
+  #popupImageOnly img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 5px;
+  }
+
   .overlay {
     display: none;
     position: fixed;
@@ -120,7 +143,7 @@
     cursor: pointer;
     user-select: none;
     transition: color 0.2s ease;
-    z-index: 1001;
+    z-index: 1002;
   }
   .close-btn:hover {
     color: #333;
@@ -140,11 +163,6 @@
 
 <!-- EmailJS SDK -->
 <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
-<script>
-  (function(){
-    emailjs.init('e2kVQDAK-HAuURhku'); // Tu Public Key
-  })();
-</script>
 
 </head>
 <body>
@@ -156,23 +174,33 @@
 
 <div class="overlay" id="overlay"></div>
 
+<!-- Popup compra -->
 <div class="popup" id="popup">
   <span class="close-btn" id="closePopup">&times;</span>
+  
   <img id="popupImg" src="" alt="Cuadro Ampliado" />
   
-  <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
-  <div class="popup-buttons">
-    <button id="btnEnviarMensaje">Enviar mensaje</button>
-  </div>
-  
-  <div id="mensajeExito" class="success-message" style="display:none;">
-    ¡Mensaje enviado correctamente!
-  </div>
+  <div class="popup-content">
+    <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
+    <div class="popup-buttons">
+      <button id="btnEnviarMensaje">Enviar mensaje</button>
+    </div>
 
-  <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="display:none;" />
-  <div class="popup-buttons" id="confirmCompraDiv" style="display:none;">
-    <button id="btnConfirmarCompra">Confirmar compra</button>
+    <div id="mensajeExito" class="success-message" style="display:none; margin-top: 1rem;">
+      ¡Mensaje enviado correctamente!
+    </div>
+
+    <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="display:none; margin-top: 1rem;" />
+    <div class="popup-buttons" id="confirmCompraDiv" style="display:none;">
+      <button id="btnConfirmarCompra">Confirmar compra</button>
+    </div>
   </div>
+</div>
+
+<!-- Popup solo imagen -->
+<div class="popup" id="popupImageOnly">
+  <span class="close-btn" id="closePopupImageOnly">&times;</span>
+  <img id="popupImageOnlyImg" src="" alt="Imagen Ampliada" />
 </div>
 
 <section class="gallery" id="gallery"></section>
@@ -187,6 +215,9 @@
 </footer>
 
 <script>
+  // Inicializa EmailJS
+  emailjs.init('e2kVQDAK-HAuURhku');
+
   let cuadroSeleccionado = null;
   let mensajesEnviados = 0;
 
@@ -207,10 +238,17 @@
             <button class="buy-button">Comprar</button>
           </div>
         `;
-        // Abrir popup al clicar el botón comprar
+
+        // Al clicar la imagen, abrir solo imagen ampliada
+        artDiv.querySelector('img').addEventListener('click', () => {
+          abrirPopupImagenSolo(cuadro.imagen, cuadro.titulo);
+        });
+
+        // Al clicar botón comprar, abrir popup compra
         artDiv.querySelector('.buy-button').addEventListener('click', () => {
           mostrarPopup(cuadro);
         });
+
         gallery.appendChild(artDiv);
       });
     } catch (error) {
@@ -223,29 +261,43 @@
 
     const popup = document.getElementById('popup');
     document.getElementById('popupImg').src = cuadro.imagen;
+    document.getElementById('popupImg').alt = cuadro.titulo;
     document.getElementById('mensaje').value = '';
     document.getElementById('direccionEnvio').value = '';
     document.getElementById('mensajeExito').style.display = 'none';
 
-    // Mostrar textarea y botón enviar, ocultar lo demás
+    // Mostrar textarea y botón enviar, ocultar input dirección y botón confirmar compra
     document.getElementById('mensaje').style.display = 'block';
+    document.getElementById('btnEnviarMensaje').style.display = 'inline-block';
     document.getElementById('direccionEnvio').style.display = 'none';
     document.getElementById('confirmCompraDiv').style.display = 'none';
 
-    popup.style.display = 'block';
+    popup.style.display = 'flex';
     document.getElementById('overlay').style.display = 'block';
   }
 
   function cerrarPopup() {
     document.getElementById('popup').style.display = 'none';
+    document.getElementById('popupImageOnly').style.display = 'none';
     document.getElementById('overlay').style.display = 'none';
     document.getElementById('mensajeExito').style.display = 'none';
     cuadroSeleccionado = null;
   }
 
   document.getElementById('closePopup').addEventListener('click', cerrarPopup);
+  document.getElementById('closePopupImageOnly').addEventListener('click', cerrarPopup);
   document.getElementById('overlay').addEventListener('click', cerrarPopup);
 
+  function abrirPopupImagenSolo(imagenSrc, titulo) {
+    const popupImgOnly = document.getElementById('popupImageOnly');
+    const imgElem = document.getElementById('popupImageOnlyImg');
+    imgElem.src = imagenSrc;
+    imgElem.alt = titulo;
+    popupImgOnly.style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+  }
+
+  // Enviar mensaje con EmailJS
   document.getElementById('btnEnviarMensaje').addEventListener('click', () => {
     if (mensajesEnviados >= 3) {
       alert('Has alcanzado el límite de 3 mensajes enviados. Por favor, espera antes de enviar más.');
@@ -256,6 +308,11 @@
     const mensaje = mensajeElem.value.trim();
     if (!mensaje) {
       alert('Por favor, escribe un mensaje antes de enviar.');
+      return;
+    }
+
+    if (!cuadroSeleccionado) {
+      alert('Error: no hay cuadro seleccionado.');
       return;
     }
 
@@ -291,6 +348,7 @@
     }, 4000);
   }
 
+  // Confirmar compra y redirigir a PayPal
   document.getElementById('btnConfirmarCompra').addEventListener('click', () => {
     const direccion = document.getElementById('direccionEnvio').value.trim();
     if (!direccion) {
@@ -302,7 +360,7 @@
       return;
     }
 
-    // Extraemos solo números y decimales del precio para PayPal
+    // Extraer número del precio para PayPal
     const precioTexto = cuadroSeleccionado.precio.replace(/[^\d.,]/g, '').replace(',', '.');
     const precioNum = parseFloat(precioTexto);
     if (isNaN(precioNum) || precioNum <= 0) {
