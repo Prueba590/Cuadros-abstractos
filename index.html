@@ -61,11 +61,7 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
-    .buy-button.large {
-      font-size: 1rem;
-      padding: 0.75rem 1.5rem;
-    }
-    .popup {
+    .popup, .image-popup {
       display: none;
       position: fixed;
       top: 50%;
@@ -76,11 +72,13 @@
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
       z-index: 1000;
-      max-width: 600px;
+      max-width: 700px;
       width: 90%;
+      box-sizing: border-box;
+    }
+    .popup {
       display: flex;
       gap: 1rem;
-      box-sizing: border-box;
     }
     .popup img {
       max-width: 45%;
@@ -103,6 +101,11 @@
     }
     .popup-buttons button {
       margin-left: 1rem;
+    }
+    .image-popup img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
     }
     .overlay {
       display: none;
@@ -141,6 +144,7 @@
       cursor: pointer;
       user-select: none;
       transition: color 0.2s ease;
+      z-index: 1001;
     }
     .close-btn:hover {
       color: #333;
@@ -162,24 +166,27 @@
   </header>
 
   <div class="overlay" id="overlay"></div>
+
+  <!-- Popup de mensaje y compra -->
   <div class="popup" id="popup">
     <span class="close-btn" id="closePopup">&times;</span>
     <img id="popupImg" src="" alt="Cuadro Ampliado" />
     <div style="flex:1;">
       <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
+      <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="margin-top: 1rem;" />
       <div class="popup-buttons">
         <button class="buy-button" onclick="enviarMensaje()">Enviar</button>
-        <button class="buy-button large" onclick="mostrarConfirmacionCompra()">Comprar</button>
-      </div>
-      <div id="confirmacionCompra" style="display:none; margin-top: 1rem;">
-        <p>¿Estás seguro de querer comprar este cuadro?</p>
-        <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" />
-        <button class="buy-button large" onclick="finalizarCompra()">Confirmar compra</button>
       </div>
       <div id="mensajeExito" class="success-message" style="display:none;">
-        ¡Compra simulada realizada con éxito! Gracias por tu interés.
+        ¡Mensaje enviado correctamente!
       </div>
     </div>
+  </div>
+
+  <!-- Popup de imagen ampliada -->
+  <div class="image-popup" id="imagePopup">
+    <span class="close-btn" id="closeImagePopup">&times;</span>
+    <img id="imagePopupImg" src="" alt="Imagen ampliada" />
   </div>
 
   <section class="gallery" id="gallery"></section>
@@ -207,9 +214,7 @@
           const artDiv = document.createElement('div');
           artDiv.className = 'art-piece';
           artDiv.innerHTML = `
-            <a href="${cuadro.imagen}" target="_blank" rel="noopener noreferrer">
-              <img src="${cuadro.imagen}" alt="${cuadro.titulo}">
-            </a>
+            <img src="${cuadro.imagen}" alt="${cuadro.titulo}" onclick="abrirImagen('${cuadro.imagen}')" />
             <div class="info">
               <h3>${cuadro.titulo}</h3>
               <p>Precio: ${cuadro.precio}</p>
@@ -223,15 +228,28 @@
       }
     }
 
+    function abrirImagen(imagen) {
+      const imagePopup = document.getElementById('imagePopup');
+      document.getElementById('imagePopupImg').src = imagen;
+      imagePopup.style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function cerrarImagen() {
+      const imagePopup = document.getElementById('imagePopup');
+      imagePopup.style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('imagePopupImg').src = '';
+    }
+
     function mostrarPopup(imagen, precio) {
       cuadroSeleccionado = { imagen, precio };
       document.getElementById('popupImg').src = imagen;
       document.getElementById('mensaje').value = '';
+      document.getElementById('direccionEnvio').value = '';
+      document.getElementById('mensajeExito').style.display = 'none';
       document.getElementById('popup').style.display = 'flex';
       document.getElementById('overlay').style.display = 'block';
-
-      document.getElementById('confirmacionCompra').style.display = 'none';
-      document.getElementById('mensajeExito').style.display = 'none';
     }
 
     function enviarMensaje() {
@@ -241,21 +259,36 @@
       }
 
       const mensajeElem = document.getElementById('mensaje');
+      const direccionElem = document.getElementById('direccionEnvio');
       const mensaje = mensajeElem.value.trim();
+      const direccion = direccionElem.value.trim();
+
       if (!mensaje) {
         alert('Por favor, escribe un mensaje antes de enviar.');
         return;
       }
+      if (!direccion) {
+        alert('Por favor, introduce tu dirección de envío.');
+        return;
+      }
 
-      emailjs.send('service_3vsow58', 'template_mh5j9yd', { mensaje })
-        .then(() => {
-          mensajesEnviados++;
-          mensajeElem.value = '';
-          mostrarMensajeEnviado();
-        }, (error) => {
-          alert('Error al enviar el mensaje, intenta de nuevo.');
-          console.error(error);
-        });
+      // Enviar datos a EmailJS
+      emailjs.send('service_3vsow58', 'template_mh5j9yd', {
+        mensaje: mensaje,
+        direccion: direccion,
+        imagen: cuadroSeleccionado.imagen,
+        precio: cuadroSeleccionado.precio
+      })
+      .then(() => {
+        mensajesEnviados++;
+        mensajeElem.value = '';
+        direccionElem.value = '';
+        mostrarMensajeEnviado();
+      })
+      .catch((error) => {
+        alert('Error al enviar el mensaje, intenta de nuevo.');
+        console.error(error);
+      });
     }
 
     function mostrarMensajeEnviado() {
@@ -263,38 +296,25 @@
       successDiv.style.display = 'block';
       setTimeout(() => {
         successDiv.style.display = 'none';
-      }, 3000);
-    }
-
-    function mostrarConfirmacionCompra() {
-      document.getElementById('confirmacionCompra').style.display = 'block';
-    }
-
-    function finalizarCompra() {
-      const direccion = document.getElementById('direccionEnvio').value.trim();
-      if (!direccion) {
-        alert('Por favor, introduce tu dirección de envío.');
-        return;
-      }
-      // Compra simulada
-      document.getElementById('confirmacionCompra').style.display = 'none';
-      const successDiv = document.getElementById('mensajeExito');
-      successDiv.textContent = '¡Compra simulada realizada con éxito! Gracias por tu interés.';
-      successDiv.style.display = 'block';
+      }, 4000);
     }
 
     function cerrarPopup() {
       document.getElementById('popup').style.display = 'none';
       document.getElementById('overlay').style.display = 'none';
-      // Reset confirmacion compra y mensajes
-      document.getElementById('confirmacionCompra').style.display = 'none';
-      document.getElementById('mensajeExito').style.display = 'none';
+      // Reset inputs and messages
       document.getElementById('mensaje').value = '';
       document.getElementById('direccionEnvio').value = '';
+      document.getElementById('mensajeExito').style.display = 'none';
+      cuadroSeleccionado = null;
     }
 
-    document.getElementById('overlay').addEventListener('click', cerrarPopup);
+    document.getElementById('overlay').addEventListener('click', () => {
+      cerrarPopup();
+      cerrarImagen();
+    });
     document.getElementById('closePopup').addEventListener('click', cerrarPopup);
+    document.getElementById('closeImagePopup').addEventListener('click', cerrarImagen);
 
     cargarCuadros();
   </script>
