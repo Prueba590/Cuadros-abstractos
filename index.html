@@ -29,6 +29,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       overflow: hidden;
       transition: transform 0.2s ease;
+      position: relative;
     }
     .art-piece:hover {
       transform: scale(1.02);
@@ -50,6 +51,63 @@
       margin: 0.5rem 0 0;
       font-size: 0.9rem;
     }
+    .buy-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .buy-button.large {
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      max-width: 600px;
+      width: 90%;
+    }
+    .popup img {
+      max-width: 45%;
+      height: auto;
+      float: left;
+      margin-right: 2rem;
+    }
+    .popup textarea, .popup input[type="text"] {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .popup-buttons {
+      margin-top: 1rem;
+      text-align: right;
+    }
+    .popup-buttons button {
+      margin-left: 1rem;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
     footer {
       background-color: #111;
       color: white;
@@ -69,9 +127,19 @@
     <p>Cuadros inspirados en el gusto artístico de mi profesor de plástica</p>
   </header>
 
-  <section class="gallery" id="gallery">
-    <!-- Los cuadros se cargarán aquí dinámicamente -->
-  </section>
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <img id="popupImg" src="" alt="Cuadro Ampliado">
+    <div>
+      <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
+      <div class="popup-buttons">
+        <button class="buy-button" onclick="enviarMensaje()">Enviar</button>
+        <button class="buy-button large" onclick="confirmarCompra()">Comprar</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="gallery" id="gallery"></section>
 
   <section class="contact">
     <h2>Contacto</h2>
@@ -83,13 +151,15 @@
   </footer>
 
   <script>
+    let cuadroSeleccionado = null;
+
     async function cargarCuadros() {
       try {
         const response = await fetch('cuadros.json');
         const cuadros = await response.json();
         const gallery = document.getElementById('gallery');
         gallery.innerHTML = '';
-        cuadros.forEach(cuadro => {
+        cuadros.forEach((cuadro, index) => {
           const artDiv = document.createElement('div');
           artDiv.className = 'art-piece';
           artDiv.innerHTML = `
@@ -99,6 +169,7 @@
             <div class="info">
               <h3>${cuadro.titulo}</h3>
               <p>Precio: ${cuadro.precio}</p>
+              <button class="buy-button" onclick="mostrarPopup('${cuadro.imagen}', '${cuadro.precio}')">Comprar</button>
             </div>
           `;
           gallery.appendChild(artDiv);
@@ -107,6 +178,36 @@
         console.error('Error cargando cuadros:', error);
       }
     }
+
+    function mostrarPopup(imagen, precio) {
+      cuadroSeleccionado = { imagen, precio };
+      document.getElementById('popupImg').src = imagen;
+      document.getElementById('mensaje').value = '';
+      document.getElementById('popup').style.display = 'flex';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function enviarMensaje() {
+      const mensaje = document.getElementById('mensaje').value;
+      const mailto = `mailto:miguel.cuadros.soporte@gmail.com?subject=Consulta sobre cuadro&body=${encodeURIComponent(mensaje)}`;
+      window.location.href = mailto;
+    }
+
+    function confirmarCompra() {
+      const direccion = prompt('Introduce tu dirección de envío:');
+      if (direccion) {
+        const cantidad = cuadroSeleccionado.precio.replace(/[^0-9,.]/g, '').replace(',', '.');
+        const pago = `https://www.paypal.com/paypalme/Cuadros.Miguel/${cantidad}`;
+        window.open(pago, '_blank');
+        cerrarPopup();
+      }
+    }
+
+    function cerrarPopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+
     cargarCuadros();
   </script>
 </body>
