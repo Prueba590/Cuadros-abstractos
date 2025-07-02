@@ -74,8 +74,8 @@
       font-size: 2em;
       letter-spacing: 2px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 1;
       position: relative;
+      z-index: 1;
     }
 
     /* Galería */
@@ -168,6 +168,21 @@
       position: relative;
       z-index: 1;
     }
+
+    /* Admin panel oculto */
+    #btn-admin {
+      position: fixed; bottom: 20px; right: 20px;
+      padding: 8px 12px; font-size: 1em;
+      display: none; z-index: 3;
+    }
+    #admin-panel {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      background: #fff; padding: 20px;
+      border: 2px solid #333; display: none;
+      z-index: 999;
+    }
+    #admin-panel h3 { margin-bottom: 10px; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 </head>
@@ -217,45 +232,59 @@
     Para errores y problemas: miguel.cuadros.soporte@gmail.com
   </footer>
 
+  <!-- Admin button y panel -->
+  <button id="btn-admin">⚙ Ajustes</button>
+  <div id="admin-panel">
+    <h3>Panel de Ajustes</h3>
+    <label>
+      Color banner:
+      <input type="color" id="input-color-banner" value="#2a5d84">
+    </label><br/><br/>
+    <label>
+      Espacio entre cuadros:
+      <input type="range" id="input-gap" min="10" max="80" value="40">
+      <span id="label-gap">40px</span>
+    </label><br/><br/>
+    <button id="save-settings">Guardar</button>
+    <button id="close-admin">Cerrar</button>
+  </div>
+
   <script>
+    // EmailJS y PayPal init
     emailjs.init('e2kVQDAK-HAuURhku');
     const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
-    function randInt(m, M){ return Math.floor(Math.random()*(M-m+1))+m; }
+    // Generar fondo: círculos y manchas
+    function randInt(m,M){ return Math.floor(Math.random()*(M-m+1))+m; }
     function randColor(){
       const pal = ['#f28c8c','#8cf2c3','#f2e78c',
                    '#8ca5f2','#e88cf2','#f2b48c'];
-      return pal[randInt(0, pal.length-1)];
+      return pal[randInt(0,pal.length-1)];
     }
-
     document.addEventListener('DOMContentLoaded', ()=>{
       const bg = document.getElementById('abstract-bg');
-
-      // Círculos
-      for(let i=0; i<20; i++){
+      for(let i=0;i<20;i++){
         const c = document.createElement('div');
-        const s = randInt(60, 180);
+        const s = randInt(60,180);
         c.className = 'abstract-shape';
         c.style.width = s+'px';
         c.style.height = s+'px';
         c.style.background = randColor();
-        c.style.top  = randInt(-20, 90) + '%';
-        c.style.left = randInt(-20, 120)+ '%';
+        c.style.top  = randInt(-20,90) + '%';
+        c.style.left = randInt(-20,120)+ '%';
         bg.appendChild(c);
       }
-
-      // Manchas de pintura
-      for(let i=0; i<30; i++){
+      for(let i=0;i<30;i++){
         const m = document.createElement('div');
-        const w = randInt(30, 80), h = randInt(30, 80);
+        const w = randInt(30,80), h = randInt(30,80);
         m.className = 'splotch-shape';
         m.style.width = w+'px';
         m.style.height = h+'px';
         m.style.background = randColor();
         m.style.borderRadius = `${randInt(20,80)}% ${randInt(20,80)}% ` +
                                `${randInt(20,80)}% ${randInt(20,80)}%`;
-        m.style.top  = randInt(-10, 85) + '%';
-        m.style.left = randInt(-10, 110)+ '%';
+        m.style.top  = randInt(-10,85) + '%';
+        m.style.left = randInt(-10,110)+ '%';
         bg.appendChild(m);
       }
     });
@@ -276,7 +305,6 @@
               <button class="btn-buy">Comprar</button>
             </div>`;
           cont.appendChild(c);
-
           c.querySelector('img').onclick = () => {
             document.getElementById('popup-img').src = item.imagen;
             document.getElementById('image-popup').style.display = 'flex';
@@ -287,10 +315,8 @@
             document.getElementById('purchase-price').textContent =
               item.precio.toFixed(2) + ' €';
             const params = new URLSearchParams({
-              cmd: '_xclick',
-              business: PAYPAL_EMAIL,
-              item_name: item.titulo,
-              amount: item.precio.toFixed(2),
+              cmd: '_xclick', business: PAYPAL_EMAIL,
+              item_name: item.titulo, amount: item.precio.toFixed(2),
               currency_code: 'EUR'
             });
             document.getElementById('paypal-btn').onclick = () => {
@@ -302,12 +328,12 @@
       })
       .catch(err => console.error('Fetch error:', err));
 
-    // Cierra popups
+    // Cerrar popups
     document.querySelectorAll('.close-popup').forEach(x =>
       x.onclick = () => x.closest('.popup').style.display = 'none'
     );
 
-    // Envía formulario
+    // Enviar formulario
     document.getElementById('purchase-form').onsubmit = function(e){
       e.preventDefault();
       emailjs.sendForm('service_3vsow58','template_mh5j9yd', this)
@@ -315,6 +341,53 @@
         .catch(e => alert('Error al enviar: ' + e.text));
       this.reset();
     };
+
+    // Modo admin
+    const PASS = 'miclave123';
+    window.addEventListener('load', () => {
+      const btnAdmin = document.getElementById('btn-admin');
+      const panel   = document.getElementById('admin-panel');
+      const inColor = document.getElementById('input-color-banner');
+      const inGap   = document.getElementById('input-gap');
+      const lblGap  = document.getElementById('label-gap');
+      if (localStorage.isAdmin === 'true') {
+        btnAdmin.style.display = 'block';
+      }
+      btnAdmin.addEventListener('click', () => {
+        if (localStorage.isAdmin !== 'true') {
+          const p = prompt('Contraseña admin:');
+          if (p === PASS) {
+            localStorage.isAdmin = 'true';
+            btnAdmin.style.display = 'block';
+          } else return;
+        }
+        panel.style.display = 'block';
+      });
+      document.getElementById('close-admin')
+        .addEventListener('click', () => panel.style.display = 'none');
+      document.getElementById('save-settings')
+        .addEventListener('click', () => {
+          const color = inColor.value;
+          const gap   = inGap.value + 'px';
+          document.documentElement.style.setProperty('--btn-azul', color);
+          document.getElementById('cards-container')
+            .style.setProperty('gap', gap);
+          lblGap.textContent = gap;
+          localStorage.bannerColor = color;
+          localStorage.cardsGap    = gap;
+          alert('Ajustes aplicados');
+        });
+      if (localStorage.bannerColor) {
+        document.documentElement.style.setProperty('--btn-azul', localStorage.bannerColor);
+        inColor.value = localStorage.bannerColor;
+      }
+      if (localStorage.cardsGap) {
+        document.getElementById('cards-container')
+          .style.setProperty('gap', localStorage.cardsGap);
+        inGap.value = parseInt(localStorage.cardsGap);
+        lblGap.textContent = localStorage.cardsGap;
+      }
+    });
   </script>
 </body>
 </html>
