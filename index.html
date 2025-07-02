@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Colección de Cuadros</title>
   <style>
-    /* Paleta de color principal */
     :root {
       --fondo: #f0ece3;
       --acento: #a67c52;
@@ -13,18 +12,20 @@
       --texto: #333;
       --btn-verde: #3a7d44;
       --btn-azul: #2a5d84;
+      --footer-bg: #e2ded6;
     }
 
-    /* Reset y body */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: var(--fondo);
       color: var(--texto);
       line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    /* Encabezado */
     .site-header {
       background: var(--acento);
       color: var(--segundario);
@@ -33,18 +34,16 @@
       font-size: 2em;
       letter-spacing: 2px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      margin-bottom: 20px;
     }
 
-    /* Contenedor de tarjetas */
     #cards-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 24px;
-      padding: 0 20px 40px;
+      padding: 20px;
+      flex: 1;
     }
 
-    /* Tarjeta individual */
     .card {
       background: var(--segundario);
       border-radius: 8px;
@@ -56,13 +55,11 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
-
     .card img {
       width: 100%;
       display: block;
       cursor: pointer;
     }
-
     .card-content {
       padding: 12px;
       text-align: center;
@@ -78,7 +75,6 @@
       font-size: 1em;
     }
 
-    /* Botones */
     .btn-buy {
       background: var(--btn-verde);
       color: #fff;
@@ -93,7 +89,6 @@
       background: #2e6538;
     }
 
-    /* Estilos genéricos de popup */
     .popup {
       display: none;
       position: fixed;
@@ -121,7 +116,6 @@
       cursor: pointer;
     }
 
-    /* Popup de compra */
     .purchase-content {
       display: flex;
       flex-wrap: wrap;
@@ -168,6 +162,16 @@
     .btn-send:hover {
       background: #244b70;
     }
+
+    /* Footer */
+    .site-footer {
+      background: var(--footer-bg);
+      text-align: center;
+      padding: 12px;
+      font-size: 0.9em;
+      color: var(--texto);
+      border-top: 1px solid #ccc;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 </head>
@@ -203,6 +207,10 @@
       </div>
     </div>
   </div>
+
+  <footer class="site-footer">
+    Para errores y problemas, contáctanos en: miguel.cuadros.soporte@gmail.com
+  </footer>
 
   <script>
     emailjs.init('e2kVQDAK-HAuURhku');
