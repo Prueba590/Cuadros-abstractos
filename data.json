@@ -43,5 +43,10 @@
     "titulo": "Fiesta saxofón",
     "precio": 20.00,
     "imagen": "https://i.imgur.com/yoF6Tl5.jpeg"
+  },
+  {
+    "titulo": "Clase de matemáticas",
+    "precio": 20.00,
+    "imagen": "https://i.imgur.com/S54CMu6.jpeg"
   }
 ]
