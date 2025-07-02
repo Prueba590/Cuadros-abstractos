@@ -1,383 +1,333 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Galería Abstracta</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    header {
-      background-color: #111;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      padding: 2rem;
-    }
-    .art-piece {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: transform 0.2s ease;
-      position: relative;
-    }
-    .art-piece:hover {
-      transform: scale(1.02);
-    }
-    .art-piece img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      cursor: pointer;
-    }
-    .info {
-      padding: 1rem;
-    }
-    .info h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-    .info p {
-      margin: 0.5rem 0 0;
-      font-size: 0.9rem;
-    }
-    .buy-button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      margin: 1rem 0 0 0;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      display: block;
-      width: 90%;
-      max-width: 180px;
-      text-align: center;
-    }
-    .popup, .image-popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      z-index: 1000;
-      max-width: 700px;
-      width: 90%;
-      box-sizing: border-box;
-    }
-    .popup {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .popup img {
-      max-width: 45%;
-      height: auto;
-      border-radius: 5px;
-      flex: 1 1 45%;
-    }
-    .popup textarea, .popup input[type="text"] {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-      resize: vertical;
-      font-family: Arial, sans-serif;
-      flex: 1 1 45%;
-      min-height: 120px;
-    }
-    .popup-buttons {
-      margin-top: 1rem;
-      text-align: right;
-      width: 100%;
-    }
-    .popup-buttons button {
-      margin-left: 1rem;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-    .image-popup img {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
-    }
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
-    footer {
-      background-color: #111;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-    .contact {
-      text-align: center;
-      padding: 2rem;
-    }
-    .success-message {
-      padding: 1rem;
-      margin-top: 1rem;
-      border: 1px solid green;
-      color: green;
-      font-weight: bold;
-      border-radius: 5px;
-      width: 100%;
-      text-align: center;
-      box-sizing: border-box;
-    }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #999;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.2s ease;
-      z-index: 1001;
-    }
-    .close-btn:hover {
-      color: #333;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Galería Abstracta</title>
+<style>
+  body {
+    margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; color: #333;
+  }
+  header {
+    background-color: #111; color: white; padding: 1rem; text-align: center;
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 2rem;
+  }
+  .art-piece {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+  .art-piece:hover {
+    transform: scale(1.02);
+  }
+  .art-piece img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  .info {
+    padding: 1rem;
+  }
+  .info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .info p {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+  }
+  .buy-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0 0 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: block;
+    width: 90%;
+    max-width: 180px;
+    text-align: center;
+  }
+  .popup {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    max-width: 700px;
+    width: 90%;
+    box-sizing: border-box;
+  }
+  .popup img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  .popup textarea, .popup input[type="text"] {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+  }
+  .popup-buttons {
+    margin-top: 1rem;
+    text-align: right;
+  }
+  .popup-buttons button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+  }
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+    z-index: 1001;
+  }
+  .close-btn:hover {
+    color: #333;
+  }
+  .success-message {
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid green;
+    color: green;
+    font-weight: bold;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+</style>
 
-  <!-- EmailJS SDK -->
-  <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
-  <script>
-    (function(){
-      emailjs.init('e2kVQDAK-HAuURhku'); // Tu User ID (Public Key)
-    })();
-  </script>
+<!-- EmailJS SDK -->
+<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init('e2kVQDAK-HAuURhku'); // Tu Public Key
+  })();
+</script>
+
 </head>
 <body>
-  <header>
-    <h1>Galería Abstracta</h1>
-    <p>Cuadros inspirados en el gusto artístico de mi profesor de plástica</p>
-  </header>
 
-  <div class="overlay" id="overlay"></div>
+<header>
+  <h1>Galería Abstracta</h1>
+  <p>Cuadros inspirados en el gusto artístico de mi profesor de plástica</p>
+</header>
 
-  <!-- Popup de mensaje y compra -->
-  <div class="popup" id="popup">
-    <span class="close-btn" id="closePopup">&times;</span>
-    <img id="popupImg" src="" alt="Cuadro Ampliado" />
-    <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
-    <div class="popup-buttons">
-      <button onclick="enviarMensaje()">Enviar mensaje</button>
-    </div>
+<div class="overlay" id="overlay"></div>
 
-    <div id="mensajeExito" class="success-message" style="display:none;">
-      ¡Mensaje enviado correctamente!
-    </div>
-
-    <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="margin-top: 1rem; display:none;" />
-    <div class="popup-buttons" id="confirmCompraDiv" style="display:none;">
-      <button onclick="confirmarCompra()">Confirmar compra</button>
-    </div>
+<div class="popup" id="popup">
+  <span class="close-btn" id="closePopup">&times;</span>
+  <img id="popupImg" src="" alt="Cuadro Ampliado" />
+  
+  <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
+  <div class="popup-buttons">
+    <button id="btnEnviarMensaje">Enviar mensaje</button>
+  </div>
+  
+  <div id="mensajeExito" class="success-message" style="display:none;">
+    ¡Mensaje enviado correctamente!
   </div>
 
-  <!-- Popup de imagen ampliada -->
-  <div class="image-popup" id="imagePopup">
-    <span class="close-btn" id="closeImagePopup">&times;</span>
-    <img id="imagePopupImg" src="" alt="Imagen ampliada" />
+  <input type="text" id="direccionEnvio" placeholder="Introduce tu dirección de envío" style="display:none;" />
+  <div class="popup-buttons" id="confirmCompraDiv" style="display:none;">
+    <button id="btnConfirmarCompra">Confirmar compra</button>
   </div>
+</div>
 
-  <section class="gallery" id="gallery"></section>
+<section class="gallery" id="gallery"></section>
 
-  <section class="contact">
-    <h2>Contacto</h2>
-    <p>¿Interesado en un cuadro? Escríbeme a: <strong>miguel.cuadros.soporte@gmail.com</strong></p>
-  </section>
+<section class="contact">
+  <h2>Contacto</h2>
+  <p>¿Interesado en un cuadro? Escríbeme a: <strong>miguel.cuadros.soporte@gmail.com</strong></p>
+</section>
 
-  <footer>
-    <p>&copy; 2025 Galería Abstracta - Proyecto personal de prueba</p>
-  </footer>
+<footer>
+  <p>&copy; 2025 Galería Abstracta - Proyecto personal de prueba</p>
+</footer>
 
-  <script>
-    let cuadroSeleccionado = null;
-    let mensajesEnviados = 0;
+<script>
+  let cuadroSeleccionado = null;
+  let mensajesEnviados = 0;
 
-    async function cargarCuadros() {
-      try {
-        const response = await fetch('cuadros.json');
-        const cuadros = await response.json();
-        const gallery = document.getElementById('gallery');
-        gallery.innerHTML = '';
-        cuadros.forEach((cuadro) => {
-          const artDiv = document.createElement('div');
-          artDiv.className = 'art-piece';
-          artDiv.innerHTML = `
-            <img src="${cuadro.imagen}" alt="${cuadro.titulo}" onclick="abrirImagen('${cuadro.imagen}')" />
-            <div class="info">
-              <h3>${cuadro.titulo}</h3>
-              <p>Precio: ${cuadro.precio}</p>
-              <button class="buy-button" onclick="mostrarPopup('${cuadro.imagen}', '${cuadro.precio}', '${cuadro.titulo}')">Comprar</button>
-            </div>
-          `;
-          gallery.appendChild(artDiv);
+  async function cargarCuadros() {
+    try {
+      const response = await fetch('cuadros.json');
+      const cuadros = await response.json();
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+      cuadros.forEach(cuadro => {
+        const artDiv = document.createElement('div');
+        artDiv.className = 'art-piece';
+        artDiv.innerHTML = `
+          <img src="${cuadro.imagen}" alt="${cuadro.titulo}" />
+          <div class="info">
+            <h3>${cuadro.titulo}</h3>
+            <p>Precio: ${cuadro.precio}</p>
+            <button class="buy-button">Comprar</button>
+          </div>
+        `;
+        // Abrir popup al clicar el botón comprar
+        artDiv.querySelector('.buy-button').addEventListener('click', () => {
+          mostrarPopup(cuadro);
         });
-      } catch (error) {
-        console.error('Error cargando cuadros:', error);
-      }
-    }
-
-    function abrirImagen(imagen) {
-      const imagePopup = document.getElementById('imagePopup');
-      document.getElementById('imagePopupImg').src = imagen;
-      imagePopup.style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function cerrarImagen() {
-      const imagePopup = document.getElementById('imagePopup');
-      imagePopup.style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-      document.getElementById('imagePopupImg').src = '';
-    }
-
-    function mostrarPopup(imagen, precio, titulo) {
-      cuadroSeleccionado = { imagen, precio, titulo };
-      const popup = document.getElementById('popup');
-      document.getElementById('popupImg').src = imagen;
-      document.getElementById('mensaje').value = '';
-      document.getElementById('direccionEnvio').value = '';
-      document.getElementById('mensajeExito').style.display = 'none';
-
-      // Mostrar solo textarea y enviar mensaje al abrir popup
-      document.getElementById('mensaje').style.display = 'block';
-      document.getElementById('direccionEnvio').style.display = 'none';
-      document.querySelector('#confirmCompraDiv').style.display = 'none';
-
-      popup.style.display = 'flex';
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function enviarMensaje() {
-      if (mensajesEnviados >= 3) {
-        alert('Has alcanzado el límite de 3 mensajes enviados. Por favor, espera antes de enviar más.');
-        return;
-      }
-
-      const mensajeElem = document.getElementById('mensaje');
-      const mensaje = mensajeElem.value.trim();
-
-      if (!mensaje) {
-        alert('Por favor, escribe un mensaje antes de enviar.');
-        return;
-      }
-
-      emailjs.send('service_3vsow58', 'template_mh5j9yd', {
-        mensaje: mensaje,
-        imagen: cuadroSeleccionado.imagen,
-        precio: cuadroSeleccionado.precio,
-        titulo: cuadroSeleccionado.titulo
-      })
-      .then(() => {
-        mensajesEnviados++;
-        mensajeElem.value = '';
-        mostrarMensajeEnviado();
-        // Mostrar la dirección y botón comprar después de enviar mensaje
-        document.getElementById('mensaje').style.display = 'none';
-        document.getElementById('direccionEnvio').style.display = 'block';
-        document.querySelector('#confirmCompraDiv').style.display = 'block';
-      })
-      .catch((error) => {
-        alert('Error al enviar el mensaje, intenta de nuevo.');
-        console.error(error);
+        gallery.appendChild(artDiv);
       });
+    } catch (error) {
+      console.error('Error cargando cuadros:', error);
+    }
+  }
+
+  function mostrarPopup(cuadro) {
+    cuadroSeleccionado = cuadro;
+
+    const popup = document.getElementById('popup');
+    document.getElementById('popupImg').src = cuadro.imagen;
+    document.getElementById('mensaje').value = '';
+    document.getElementById('direccionEnvio').value = '';
+    document.getElementById('mensajeExito').style.display = 'none';
+
+    // Mostrar textarea y botón enviar, ocultar lo demás
+    document.getElementById('mensaje').style.display = 'block';
+    document.getElementById('direccionEnvio').style.display = 'none';
+    document.getElementById('confirmCompraDiv').style.display = 'none';
+
+    popup.style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+  }
+
+  function cerrarPopup() {
+    document.getElementById('popup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('mensajeExito').style.display = 'none';
+    cuadroSeleccionado = null;
+  }
+
+  document.getElementById('closePopup').addEventListener('click', cerrarPopup);
+  document.getElementById('overlay').addEventListener('click', cerrarPopup);
+
+  document.getElementById('btnEnviarMensaje').addEventListener('click', () => {
+    if (mensajesEnviados >= 3) {
+      alert('Has alcanzado el límite de 3 mensajes enviados. Por favor, espera antes de enviar más.');
+      return;
     }
 
-    function mostrarMensajeEnviado() {
-      const successDiv = document.getElementById('mensajeExito');
-      successDiv.style.display = 'block';
-      setTimeout(() => {
-        successDiv.style.display = 'none';
-      }, 4000);
+    const mensajeElem = document.getElementById('mensaje');
+    const mensaje = mensajeElem.value.trim();
+    if (!mensaje) {
+      alert('Por favor, escribe un mensaje antes de enviar.');
+      return;
     }
 
-    function confirmarCompra() {
-      const direccion = document.getElementById('direccionEnvio').value.trim();
-      if (!direccion) {
-        alert('Por favor, introduce tu dirección de envío antes de confirmar la compra.');
-        return;
-      }
-      if (!cuadroSeleccionado) {
-        alert('Error: no hay cuadro seleccionado.');
-        return;
-      }
+    emailjs.send('service_3vsow58', 'template_mh5j9yd', {
+      mensaje: mensaje,
+      imagen: cuadroSeleccionado.imagen,
+      precio: cuadroSeleccionado.precio,
+      titulo: cuadroSeleccionado.titulo
+    }).then(() => {
+      mensajesEnviados++;
+      mensajeElem.value = '';
+      mostrarMensajeEnviado();
 
-      const precioTexto = cuadroSeleccionado.precio.replace(/[^\d.,]/g, '').replace(',', '.');
-      const precioNum = parseFloat(precioTexto);
-      if (isNaN(precioNum) || precioNum <= 0) {
-        alert('Precio no válido para el pago.');
-        return;
-      }
+      // Ocultar textarea y botón enviar
+      mensajeElem.style.display = 'none';
+      document.getElementById('btnEnviarMensaje').style.display = 'none';
 
-      const emailVendedor = 'miguel.cuadros.soporte@gmail.com';
-      const nombreProducto = encodeURIComponent(cuadroSeleccionado.titulo || 'Cuadro Abstracto');
-      const precioPago = precioNum.toFixed(2);
+      // Mostrar input dirección y botón confirmar compra
+      document.getElementById('direccionEnvio').style.display = 'block';
+      document.getElementById('confirmCompraDiv').style.display = 'block';
 
-      const paypalUrl = 
-        `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick` +
-        `&business=${encodeURIComponent(emailVendedor)}` +
-        `&item_name=${nombreProducto}` +
-        `&amount=${precioPago}` +
-        `&currency_code=EUR`;
-
-      if(confirm(`Vas a pagar ${precioPago} € por el cuadro.\n¿Quieres proceder al pago?`)){
-        window.location.href = paypalUrl;
-      }
-    }
-
-    function cerrarPopup() {
-      document.getElementById('popup').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-      document.getElementById('mensajeExito').style.display = 'none';
-      document.getElementById('mensaje').style.display = 'block';
-      document.getElementById('direccionEnvio').style.display = 'none';
-      document.querySelector('#confirmCompraDiv').style.display = 'none';
-      document.getElementById('mensaje').value = '';
-      document.getElementById('direccionEnvio').value = '';
-      cuadroSeleccionado = null;
-    }
-
-    document.getElementById('overlay').addEventListener('click', () => {
-      cerrarPopup();
-      cerrarImagen();
+    }).catch((error) => {
+      alert('Error al enviar el mensaje, intenta de nuevo.');
+      console.error(error);
     });
-    document.getElementById('closePopup').addEventListener('click', cerrarPopup);
-    document.getElementById('closeImagePopup').addEventListener('click', cerrarImagen);
+  });
 
-    cargarCuadros();
-  </script>
+  function mostrarMensajeEnviado() {
+    const successDiv = document.getElementById('mensajeExito');
+    successDiv.style.display = 'block';
+    setTimeout(() => {
+      successDiv.style.display = 'none';
+    }, 4000);
+  }
+
+  document.getElementById('btnConfirmarCompra').addEventListener('click', () => {
+    const direccion = document.getElementById('direccionEnvio').value.trim();
+    if (!direccion) {
+      alert('Por favor, introduce tu dirección de envío antes de confirmar la compra.');
+      return;
+    }
+    if (!cuadroSeleccionado) {
+      alert('Error: no hay cuadro seleccionado.');
+      return;
+    }
+
+    // Extraemos solo números y decimales del precio para PayPal
+    const precioTexto = cuadroSeleccionado.precio.replace(/[^\d.,]/g, '').replace(',', '.');
+    const precioNum = parseFloat(precioTexto);
+    if (isNaN(precioNum) || precioNum <= 0) {
+      alert('Precio no válido para el pago.');
+      return;
+    }
+
+    const emailVendedor = 'miguel.cuadros.soporte@gmail.com';
+    const nombreProducto = encodeURIComponent(cuadroSeleccionado.titulo || 'Cuadro Abstracto');
+    const precioPago = precioNum.toFixed(2);
+
+    const paypalUrl = 
+      `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick` +
+      `&business=${encodeURIComponent(emailVendedor)}` +
+      `&item_name=${nombreProducto}` +
+      `&amount=${precioPago}` +
+      `&currency_code=EUR`;
+
+    if(confirm(`Vas a pagar ${precioPago} € por el cuadro.\n¿Quieres proceder al pago?`)){
+      window.location.href = paypalUrl;
+    }
+  });
+
+  cargarCuadros();
+</script>
+
 </body>
 </html>
