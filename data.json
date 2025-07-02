@@ -1,28 +1,12 @@
 [
   {
-    "titulo": "Cuadro Amanecer",
-    "precio": 59.99,
-    "imagen": "img/cuadro_amanecer.jpg"
+    "titulo": "Frutas borrachas",
+    "precio": 20.00,
+    "imagen": "https://i.imgur.com/vmQVKug.jpeg"
   },
   {
-    "titulo": "Cuadro Abstracto Azul",
-    "precio": 75.00,
-    "imagen": "img/cuadro_abstracto_azul.jpg"
-  },
-  {
-    "titulo": "Cuadro Floral Vintage",
-    "precio": 42.50,
-    "imagen": "img/cuadro_floral_vintage.jpg"
-  },
-  {
-    "titulo": "Cuadro Montañas Minimalistas",
-    "precio": 68.00,
-    "imagen": "img/cuadro_montanas_minimalistas.jpg"
-  },
-  {
-    "titulo": "Cuadro Line Art Mujer",
-    "precio": 38.90,
-    "imagen": "img/cuadro_line_art_mujer.jpg"
+    "titulo": "Fin en el fin",
+    "precio": 30.00,
+    "imagen": "https://i.imgur.com/vmQVKug.jpeg"
   }
 ]
-
