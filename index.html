@@ -80,6 +80,7 @@
       width: 90%;
       display: flex;
       gap: 1rem;
+      box-sizing: border-box;
     }
     .popup img {
       max-width: 45%;
@@ -130,6 +131,20 @@
       font-weight: bold;
       border-radius: 5px;
     }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #999;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+    .close-btn:hover {
+      color: #333;
+    }
   </style>
 
   <!-- EmailJS SDK -->
@@ -148,6 +163,7 @@
 
   <div class="overlay" id="overlay"></div>
   <div class="popup" id="popup">
+    <span class="close-btn" id="closePopup">&times;</span>
     <img id="popupImg" src="" alt="Cuadro Ampliado" />
     <div style="flex:1;">
       <textarea id="mensaje" placeholder="Escribe aquí si tienes alguna oferta o duda."></textarea>
@@ -224,7 +240,8 @@
         return;
       }
 
-      const mensaje = document.getElementById('mensaje').value.trim();
+      const mensajeElem = document.getElementById('mensaje');
+      const mensaje = mensajeElem.value.trim();
       if (!mensaje) {
         alert('Por favor, escribe un mensaje antes de enviar.');
         return;
@@ -233,12 +250,20 @@
       emailjs.send('service_3vsow58', 'template_mh5j9yd', { mensaje })
         .then(() => {
           mensajesEnviados++;
-          alert('Mensaje enviado correctamente');
-          document.getElementById('mensaje').value = '';
+          mensajeElem.value = '';
+          mostrarMensajeEnviado();
         }, (error) => {
           alert('Error al enviar el mensaje, intenta de nuevo.');
           console.error(error);
         });
+    }
+
+    function mostrarMensajeEnviado() {
+      const successDiv = document.getElementById('mensajeExito');
+      successDiv.style.display = 'block';
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 3000);
     }
 
     function mostrarConfirmacionCompra() {
@@ -253,15 +278,23 @@
       }
       // Compra simulada
       document.getElementById('confirmacionCompra').style.display = 'none';
-      document.getElementById('mensajeExito').style.display = 'block';
+      const successDiv = document.getElementById('mensajeExito');
+      successDiv.textContent = '¡Compra simulada realizada con éxito! Gracias por tu interés.';
+      successDiv.style.display = 'block';
     }
 
     function cerrarPopup() {
       document.getElementById('popup').style.display = 'none';
       document.getElementById('overlay').style.display = 'none';
+      // Reset confirmacion compra y mensajes
+      document.getElementById('confirmacionCompra').style.display = 'none';
+      document.getElementById('mensajeExito').style.display = 'none';
+      document.getElementById('mensaje').value = '';
+      document.getElementById('direccionEnvio').value = '';
     }
 
     document.getElementById('overlay').addEventListener('click', cerrarPopup);
+    document.getElementById('closePopup').addEventListener('click', cerrarPopup);
 
     cargarCuadros();
   </script>
