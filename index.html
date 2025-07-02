@@ -3,54 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mi Tienda</title>
+  <title>Colección de Cuadros</title>
   <style>
-    body {
-      margin: 0; padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
+    /* Paleta de color principal */
+    :root {
+      --fondo: #f0ece3;
+      --acento: #a67c52;
+      --segundario: #fff;
+      --texto: #333;
+      --btn-verde: #3a7d44;
+      --btn-azul: #2a5d84;
     }
 
+    /* Reset y body */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+      line-height: 1.5;
+    }
+
+    /* Encabezado */
+    .site-header {
+      background: var(--acento);
+      color: var(--segundario);
+      text-align: center;
+      padding: 20px;
+      font-size: 2em;
+      letter-spacing: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    /* Contenedor de tarjetas */
     #cards-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      padding: 0 20px 40px;
     }
 
+    /* Tarjeta individual */
     .card {
-      background: #fff;
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
+      background: var(--segundario);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
 
     .card img {
       width: 100%;
+      display: block;
       cursor: pointer;
-      border-radius: 4px;
     }
 
-    .card h3 {
-      margin: 10px 0 5px;
+    .card-content {
+      padding: 12px;
+      text-align: center;
+    }
+    .card-content h3 {
+      margin-bottom: 6px;
       font-size: 1.1em;
     }
-
-    .card .price {
-      color: #333;
-      margin-bottom: 10px;
+    .card-content .price {
+      margin-bottom: 12px;
+      color: var(--acento);
       font-weight: bold;
+      font-size: 1em;
     }
 
+    /* Botones */
     .btn-buy {
-      background: #28a745;
+      background: var(--btn-verde);
       color: #fff;
       border: none;
       padding: 8px 16px;
       cursor: pointer;
       border-radius: 4px;
       font-size: 0.95em;
+      transition: background 0.2s;
+    }
+    .btn-buy:hover {
+      background: #2e6538;
     }
 
+    /* Estilos genéricos de popup */
     .popup {
       display: none;
       position: fixed;
@@ -61,63 +104,58 @@
       align-items: center;
       z-index: 1000;
     }
-
     .popup-content {
-      background: #fff;
+      background: var(--segundario);
       padding: 20px;
       position: relative;
-      border-radius: 4px;
+      border-radius: 6px;
       max-width: 90%;
       max-height: 90%;
       overflow: auto;
     }
-
     .close-popup {
       position: absolute;
       top: 10px; right: 10px;
       font-size: 1.5em;
+      color: var(--texto);
       cursor: pointer;
     }
 
+    /* Popup de compra */
     .purchase-content {
       display: flex;
       flex-wrap: wrap;
+      gap: 20px;
     }
-
     .purchase-content .left,
     .purchase-content .right {
-      flex: 1 1 200px;
-      padding: 10px;
+      flex: 1 1 250px;
     }
-
     .purchase-content .left img {
       width: 100%;
       border-radius: 4px;
     }
-
     .purchase-content .right h2 {
-      margin: 0 0 5px;
+      margin-bottom: 6px;
     }
-
     .purchase-content .right .price {
+      color: var(--acento);
       font-size: 1.1em;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
-
     .purchase-content textarea {
       width: 100%;
       height: 80px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       padding: 8px;
-      font-size: 0.95em;
       border: 1px solid #ccc;
       border-radius: 4px;
       resize: vertical;
+      font-family: inherit;
     }
-
     .btn-send {
-      background: #007bff;
+      background: var(--btn-azul);
       color: #fff;
       border: none;
       padding: 8px 16px;
@@ -125,17 +163,22 @@
       border-radius: 4px;
       font-size: 0.95em;
       margin-right: 10px;
+      transition: background 0.2s;
+    }
+    .btn-send:hover {
+      background: #244b70;
     }
   </style>
-
-  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 </head>
 <body>
 
+  <header class="site-header">
+    Colección de Cuadros
+  </header>
+
   <div id="cards-container"></div>
 
-  <!-- Popup imagen ampliada -->
   <div id="image-popup" class="popup">
     <div class="popup-content">
       <span class="close-popup">&times;</span>
@@ -143,7 +186,6 @@
     </div>
   </div>
 
-  <!-- Popup compra/oferta -->
   <div id="purchase-popup" class="popup">
     <div class="popup-content purchase-content">
       <span class="close-popup">&times;</span>
@@ -163,10 +205,7 @@
   </div>
 
   <script>
-    // Inicializa EmailJS con tu public key
     emailjs.init('e2kVQDAK-HAuURhku');
-
-    // Tu correo de vendedor en PayPal
     const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
     fetch('data.json')
@@ -178,25 +217,24 @@
           card.className = 'card';
           card.innerHTML = `
             <img src="${item.imagen}" alt="${item.titulo}" />
-            <h3>${item.titulo}</h3>
-            <div class="price">${item.precio.toFixed(2)} €</div>
-            <button class="btn-buy">Comprar</button>
+            <div class="card-content">
+              <h3>${item.titulo}</h3>
+              <div class="price">${item.precio.toFixed(2)} €</div>
+              <button class="btn-buy">Comprar</button>
+            </div>
           `;
           container.appendChild(card);
 
-          // Mostrar popup de imagen ampliada
           card.querySelector('img').addEventListener('click', () => {
             document.getElementById('popup-img').src = item.imagen;
             document.getElementById('image-popup').style.display = 'flex';
           });
 
-          // Mostrar popup de compra/oferta
           card.querySelector('.btn-buy').addEventListener('click', () => {
             document.getElementById('purchase-img').src = item.imagen;
             document.getElementById('purchase-title').textContent = item.titulo;
             document.getElementById('purchase-price').textContent = item.precio.toFixed(2) + ' €';
 
-            // Generar enlace PayPal
             const params = new URLSearchParams({
               cmd: '_xclick',
               business: PAYPAL_EMAIL,
@@ -214,14 +252,12 @@
       })
       .catch(console.error);
 
-    // Cerrar popups
     document.querySelectorAll('.close-popup').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.closest('.popup').style.display = 'none';
       });
     });
 
-    // Envío de formulario con EmailJS
     document.getElementById('purchase-form').addEventListener('submit', function(e) {
       e.preventDefault();
       emailjs.sendForm('service_3vsow58', 'template_mh5j9yd', this)
