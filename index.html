@@ -14,24 +14,26 @@
       --btn-azul: #2a5d84;
       --footer-bg: #e2ded6;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Asegura que el body flex funcione */
+    html, body {
+      height: 100%;
+      margin: 0; padding: 0;
+    }
     body {
-      position: relative;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--fondo);
-      color: var(--texto);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      background: var(--fondo);
+      color: var(--texto);
+      font-family: 'Segoe UI', sans-serif;
       overflow-x: hidden;
     }
 
-    /* Fondo abstracto */
+    /* Fondo abstracto detrás de todo */
     #abstract-bg {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: -2;
+      z-index: -10;
       overflow: hidden;
     }
     .abstract-shape {
@@ -44,13 +46,6 @@
       0%   { transform: translateY(0) rotate(0deg); }
       50%  { transform: translateY(-20px) rotate(180deg); }
       100% { transform: translateY(0) rotate(360deg); }
-    }
-
-    /* Animación de ondulación */
-    @keyframes wave {
-      0%   { transform: rotate(0deg); }
-      50%  { transform: rotate(3deg); }
-      100% { transform: rotate(0deg); }
     }
 
     /* Header */
@@ -66,20 +61,21 @@
 
     /* Galería de tarjetas */
     #cards-container {
+      background: transparent;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
       gap: 24px;
       padding: 20px;
-      flex: 1;
+      flex: 1;              /* ocupar espacio restante */
       position: relative;
-      z-index: 1;
+      z-index: 1;           /* por encima del fondo */
     }
     .card {
       background: var(--segundario);
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform .2s, box-shadow .2s;
     }
     .card:hover {
       transform: translateY(-4px);
@@ -90,6 +86,10 @@
       display: block;
       cursor: pointer;
       animation: wave 4s ease-in-out infinite;
+    }
+    @keyframes wave {
+      0%,100% { transform: rotate(0deg); }
+      50%     { transform: rotate(3deg); }
     }
     .card-content {
       padding: 12px;
@@ -103,21 +103,17 @@
       margin-bottom: 12px;
       color: var(--acento);
       font-weight: bold;
-      font-size: 1em;
     }
     .btn-buy {
       background: var(--btn-verde);
       color: #fff;
       border: none;
       padding: 8px 16px;
-      cursor: pointer;
       border-radius: 4px;
-      font-size: 0.95em;
-      transition: background 0.2s;
+      cursor: pointer;
+      transition: background .2s;
     }
-    .btn-buy:hover {
-      background: #2e6538;
-    }
+    .btn-buy:hover { background: #2e6538; }
 
     /* Popups */
     .popup {
@@ -133,11 +129,11 @@
     .popup-content {
       background: var(--segundario);
       padding: 20px;
-      position: relative;
       border-radius: 6px;
       max-width: 90%;
       max-height: 90%;
       overflow: auto;
+      position: relative;
     }
     .close-popup {
       position: absolute;
@@ -152,61 +148,12 @@
       transform: none !important;
     }
 
-    /* Popup de compra */
-    .purchase-content {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .purchase-content .left,
-    .purchase-content .right {
-      flex: 1 1 250px;
-    }
-    .purchase-content .left img {
-      width: 100%;
-      border-radius: 4px;
-    }
-    .purchase-content .right h2 {
-      margin-bottom: 6px;
-    }
-    .purchase-content .right .price {
-      color: var(--acento);
-      font-size: 1.1em;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
-    .purchase-content textarea {
-      width: 100%;
-      height: 80px;
-      margin-bottom: 12px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      resize: vertical;
-      font-family: inherit;
-    }
-    .btn-send {
-      background: var(--btn-azul);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 0.95em;
-      margin-right: 10px;
-      transition: background 0.2s;
-    }
-    .btn-send:hover {
-      background: #244b70;
-    }
-
     /* Footer */
     .site-footer {
       background: var(--footer-bg);
       text-align: center;
       padding: 12px;
-      font-size: 0.9em;
-      color: var(--texto);
+      font-size: .9em;
       border-top: 1px solid #ccc;
     }
   </style>
@@ -223,7 +170,7 @@
 
   <div id="cards-container"></div>
 
-  <!-- Popup imagen -->
+  <!-- Popup imagen ampliada -->
   <div id="image-popup" class="popup">
     <div class="popup-content">
       <span class="close-popup">&times;</span>
@@ -233,19 +180,21 @@
 
   <!-- Popup compra/oferta -->
   <div id="purchase-popup" class="popup">
-    <div class="popup-content purchase-content">
+    <div class="popup-content">
       <span class="close-popup">&times;</span>
-      <div class="left">
-        <img id="purchase-img" src="" alt="Producto"/>
-      </div>
-      <div class="right">
-        <h2 id="purchase-title"></h2>
-        <div class="price" id="purchase-price"></div>
-        <form id="purchase-form">
-          <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda"></textarea>
-          <button type="submit" class="btn-send">Enviar</button>
-        </form>
-        <button id="paypal-btn" class="btn-buy">Comprar</button>
+      <div class="purchase-content">
+        <div class="left">
+          <img id="purchase-img" src="" alt="Producto"/>
+        </div>
+        <div class="right">
+          <h2 id="purchase-title"></h2>
+          <div class="price" id="purchase-price"></div>
+          <form id="purchase-form">
+            <textarea name="message" placeholder="escribe aquí si tienes alguna oferta o duda"></textarea>
+            <button type="submit" class="btn-send">Enviar</button>
+          </form>
+          <button id="paypal-btn" class="btn-buy">Comprar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -255,42 +204,52 @@
   </footer>
 
   <script>
-    // EmailJS
+    // Configuración EmailJS y PayPal
     emailjs.init('e2kVQDAK-HAuURhku');
     const PAYPAL_EMAIL = 'miguel.cuadros.soporte@gmail.com';
 
-    // 1) Generar formas abstractas
-    function randomInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    // Genera fondo abstracto
+    function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+    function randomColor(){
+      const pal = ['#f28c8c','#8cf2c3','#f2e78c','#8ca5f2','#e88cf2','#f2b48c'];
+      return pal[randomInt(0,pal.length-1)];
     }
-    function randomColor() {
-      // paleta pastel
-      const paleta = ['#f28c8c','#8cf2c3','#f2e78c','#8ca5f2','#e88cf2','#f2b48c'];
-      return paleta[randomInt(0, paleta.length - 1)];
-    }
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded',()=>{
       const bg = document.getElementById('abstract-bg');
-      for (let i = 0; i < 25; i++) {
-        const s = document.createElement('div');
-        const size = randomInt(60, 180);
-        s.className = 'abstract-shape';
-        s.style.width = size + 'px';
-        s.style.height = size + 'px';
-        s.style.background = randomColor();
-        s.style.top  = randomInt(-50, 90)  + '%';
-        s.style.left = randomInt(-20, 120) + '%';
+      for(let i=0;i<25;i++){
+        const s=document.createElement('div');
+        const size=randomInt(60,180);
+        s.className='abstract-shape';
+        s.style.width=`${size}px`;
+        s.style.height=`${size}px`;
+        s.style.background=randomColor();
+        s.style.top=`${randomInt(-20,90)}%`;
+        s.style.left=`${randomInt(-20,120)}%`;
         bg.appendChild(s);
       }
     });
 
-    // 2) Cargar y renderizar cuadros
+    // Carga y pinta los cuadros
     fetch('data.json')
-      .then(r => r.json())
-      .then(data => {
-        const container = document.getElementById('cards-container');
-        data.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
+      .then(r=>r.json())
+      .then(data=>{
+        const cont = document.getElementById('cards-container');
+        data.forEach(item=>{
+          const card=document.createElement('div');
+          card.className='card';
+          card.innerHTML=`
             <img src="${item.imagen}" alt="${item.titulo}" />
             <div class="card-content">
+              <h3>${item.titulo}</h3>
+              <div class="price">${item.precio.toFixed(2)} €</div>
+              <button class="btn-buy">Comprar</button>
+            </div>`;
+          cont.appendChild(card);
+
+          // Popup imagen
+          card.querySelector('img').onclick = ()=>{
+            document.getElementById('popup-img').src = item.imagen;
+            document.getElementById('image-popup').style.display = 'flex';
+          };
+
+          //
